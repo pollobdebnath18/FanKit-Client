@@ -1,0 +1,43 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B1F3A"/>
+      <stop offset="100%" stop-color="#132C52"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5C542"/>
+      <stop offset="100%" stop-color="#E0A421"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Badge circle -->
+  <circle cx="200" cy="200" r="150" fill="url(#badgeGrad)"/>
+  <circle cx="200" cy="200" r="150" fill="none" stroke="url(#goldGrad)" stroke-width="6"/>
+  <circle cx="200" cy="200" r="136" fill="none" stroke="#F5C542" stroke-width="1.2" opacity="0.4"/>
+
+  <!-- Jersey icon -->
+  <g transform="translate(200,155)">
+    <path d="
+      M -32 -43
+      L -13 -54
+      C -7.5 -47 7.5 -47 13 -54
+      L 32 -43
+      L 43 -20
+      L 28 -9
+      L 28 45
+      C 28 48 25 51 21 51
+      L -21 51
+      C -25 51 -28 48 -28 45
+      L -28 -9
+      L -43 -20
+      Z"
+      fill="#F7F7F5" stroke="#0B1F3A" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M -13 -54 C -7.5 -47 7.5 -47 13 -54 L 7 -47 C 3.5 -43 -3.5 -43 -7 -47 Z" fill="#0B1F3A"/>
+    <text x="0" y="27" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="38" fill="#0B1F3A">10</text>
+    <rect x="-28" y="-9" width="5.5" height="54" fill="#E0A421" opacity="0.85"/>
+    <rect x="22.5" y="-9" width="5.5" height="54" fill="#E0A421" opacity="0.85"/>
+  </g>
+
+  <!-- FanKit text at bottom of the jersey, inside the circle -->
+  <text x="200" y="278" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="34" fill="#FFFFFF" letter-spacing="0.5">Fan<tspan fill="#E0A421">Kit</tspan></text>
+</svg>
