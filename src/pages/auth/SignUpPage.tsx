@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { authClient } from "../../lib/auth-client";
 
 interface SignUpFormData {
   name: string;
@@ -26,6 +27,9 @@ const SignUpPage = () => {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState<SignUpErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const navigate = useNavigate();
 
   const validate = () => {
     const nextErrors: SignUpErrors = {};
@@ -72,9 +76,39 @@ const SignUpPage = () => {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!validate()) return;
+
+    setIsSubmitting(true);
+    setServerError("");
+
+    try {
+      const { data, error } = await authClient.signUp.email({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        callbackURL: "/",
+      });
+
+      if (error) {
+        throw new Error(error.message || "Unable to create your account.");
+      }
+
+      if (data?.user) {
+        navigate("/signin");
+      } else {
+        throw new Error("Registration completed, but no user was returned.");
+      }
+    } catch (error) {
+      setServerError(
+        error instanceof Error
+          ? error.message
+          : "Unable to create your account right now.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -225,11 +259,18 @@ const SignUpPage = () => {
                 ) : null}
               </label>
 
+              {serverError ? (
+                <div className="rounded-xl border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">
+                  {serverError}
+                </div>
+              ) : null}
+
               <button
                 type="submit"
                 className="btn btn-primary w-full rounded-full"
+                disabled={isSubmitting}
               >
-                Create Account
+                {isSubmitting ? "Creating account..." : "Create Account"}
               </button>
             </form>
 
