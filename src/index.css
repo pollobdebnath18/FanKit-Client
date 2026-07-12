@@ -7,3 +7,21 @@
 body {
   font-family: "Inter", sans-serif;
 }
+
+/* react fast marquee */
+/* Add this to your global CSS file (e.g. index.css / globals.css) */
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* -50% because the list is duplicated once, so this scrolls exactly
+       one full copy of the content before looping seamlessly */
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
