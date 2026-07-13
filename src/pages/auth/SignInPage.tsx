@@ -1,6 +1,8 @@
 import { type FormEvent, useState } from "react";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router";
+import { authClient } from "../../lib/auth-client";
+import { useNavigate } from "react-router";
 
 interface SignInFormData {
   email: string;
@@ -19,6 +21,11 @@ const SignInPage = () => {
     password: "",
   });
   const [errors, setErrors] = useState<SignInErrors>({});
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
+
+  
 
   const validate = () => {
     const nextErrors: SignInErrors = {};
@@ -45,10 +52,39 @@ const SignInPage = () => {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!validate()) return;
-  };
+ const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+   event.preventDefault();
+
+   if (!validate()) return;
+
+   setIsSubmitting(true);
+   setServerError("");
+
+   try {
+     const { data, error } = await authClient.signIn.email({
+       email: formData.email,
+       password: formData.password,
+     });
+
+     console.log({ data, error });
+
+     if (error) {
+       throw new Error(error.message || "Invalid email or password.");
+     }
+
+     navigate("/", {
+       replace: true,
+     });
+   } catch (err) {
+     setServerError(
+       err instanceof Error
+         ? err.message
+         : "Unable to sign in. Please try again.",
+     );
+   } finally {
+     setIsSubmitting(false);
+   }
+ };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15),transparent_45%)] px-4">
@@ -115,13 +151,25 @@ const SignInPage = () => {
               <input type="checkbox" className="checkbox checkbox-sm" />
               <span className="label-text">Remember me</span>
             </label>
-            <a href="#" className="font-medium text-primary hover:underline">
+            <Link
+              to="/forgot-password"
+              className="font-medium text-primary hover:underline"
+            >
               Forgot password?
-            </a>
+            </Link>
           </div>
+          {serverError && (
+            <div className="rounded-lg bg-red-100 border border-red-300 text-red-600 px-4 py-3">
+              {serverError}
+            </div>
+          )}
 
-          <button type="submit" className="btn btn-primary w-full rounded-full">
-            Sign In
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn btn-primary w-full"
+          >
+            {isSubmitting ? "Signing In..." : "Sign In"}
           </button>
         </form>
 

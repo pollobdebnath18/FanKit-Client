@@ -84,19 +84,24 @@ const SignUpPage = () => {
     setServerError("");
 
     try {
-      const { data, error } = await authClient.signUp.email({
-        email: formData.email,
-        password: formData.password,
-        name: formData.name,
-        callbackURL: "/",
-      });
+     const result = await authClient.signUp.email({
+       email: formData.email,
+       password: formData.password,
+       name: formData.name,
+       callbackURL: "/",
+     });
+
+     console.log(result);
+
+     const { data, error } = result;
 
       if (error) {
         throw new Error(error.message || "Unable to create your account.");
       }
 
       if (data?.user) {
-        navigate("/signin");
+        navigate("/");
+        alert("Account created successfully");
       } else {
         throw new Error("Registration completed, but no user was returned.");
       }

@@ -10,6 +10,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import logo from "../../assets/fankit-logo.svg";
+import { authClient } from "../../lib/auth-client";
 
 interface NavItem {
   label: string;
@@ -27,6 +28,12 @@ const navItems: NavItem[] = [
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const {data:session , isPending} = authClient.useSession();
+    if (isPending) {
+      return <nav className="navbar">Loading...</nav>;
+    }
+  console.log(session);
 
   const menuVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -119,29 +126,62 @@ const Navbar: FC = () => {
             </motion.div>
 
             {/* Auth Buttons - Desktop */}
-            <div className="hidden md:flex items-center gap-2">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  to="/signin"
-                  className="px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-all"
-                >
-                  Sign In
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  to="/signup"
-                  className="px-6 py-2 bg-linear-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all"
-                >
-                  Sign Up
-                </Link>
-              </motion.div>
+            <div className="hidden md:flex items-center gap-3">
+              {isPending ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : session?.user ? (
+                <>
+                  <img
+                    src={
+                      session.user.image ||
+                      `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(session.user.name)}`
+                    }
+                    alt={session.user.name}
+                    className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+                  />
+
+                  <button
+                    onClick={async () => {
+                      await authClient.signOut({
+                        fetchOptions: {
+                          onSuccess: () => {
+                            window.location.href = "/";
+                          },
+                        },
+                      });
+                    }}
+                    className="px-5 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      to="/signin"
+                      className="px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-all"
+                    >
+                      Sign In
+                    </Link>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      to="/signup"
+                      className="px-6 py-2 bg-linear-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all"
+                    >
+                      Get Started
+                    </Link>
+                  </motion.div>
+                </>
+              )}
             </div>
 
             {/* Mobile User Icon */}
@@ -226,22 +266,87 @@ const Navbar: FC = () => {
                   </motion.div>
                 ))}
 
-                {/* Mobile Auth Section */}
+                {/* Auth Mobile Menu */}
                 <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-200">
-                  <Link
-                    to="/signin"
-                    className="px-4 py-2 text-center text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-all"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="px-4 py-2 text-center bg-linear-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
+                  {session?.user ? (
+                    <>
+                      <div className="flex items-center gap-3 px-2 py-2">
+                        <img
+                          src={
+                            session.user.image ||
+                            `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(session.user.name)}`
+                          }
+                          alt={session.user.name}
+                          className="w-12 h-12 rounded-full border object-cover"
+                        />
+
+                        <div>
+                          <h3 className="font-semibold">{session.user.name}</h3>
+                          <p className="text-sm text-gray-500">
+                            {session.user.email}
+                          </p>
+                        </div>
+                      </div>
+
+                      <Link
+                        to="/dashboard"
+                        className="px-4 py-2 rounded-lg hover:bg-gray-100 transition"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Dashboard
+                      </Link>
+
+                      <Link
+                        to="/profile"
+                        className="px-4 py-2 rounded-lg hover:bg-gray-100 transition"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Profile
+                      </Link>
+
+                      <Link
+                        to="/orders"
+                        className="px-4 py-2 rounded-lg hover:bg-gray-100 transition"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        My Orders
+                      </Link>
+
+                      <button
+                        onClick={async () => {
+                          await authClient.signOut({
+                            fetchOptions: {
+                              onSuccess: () => {
+                                setIsMenuOpen(false);
+                                window.location.href = "/";
+                              },
+                            },
+                          });
+                        }}
+                        className="w-full px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition"
+                      >
+                        Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        to="/signin"
+                        className="px-4 py-2 text-center text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Sign In
+                      </Link>
+
+                      <Link
+                        to="/signup"
+                        className="px-4 py-2 text-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg hover:shadow-lg transition"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Get Started
+                      </Link>
+                    </>
+                  )}
                 </div>
               </nav>
             </motion.div>
