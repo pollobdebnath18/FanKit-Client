@@ -1,8 +1,21 @@
 import { apiClient } from "./apiClient";
 
+export interface Product {
+  _id: string;
+  title: string;
+  shortDescription: string;
+  fullDescription: string;
+  team: string;
+  category: string;
+  price: number;
+  stock: number;
+  sizes: string[];
+  imageUrl: string;
+  createdAt: string;
+}
 export const ProductAPI = {
   getAll() {
-    return apiClient("/api/products");
+    return apiClient<Product[]>("/api/products");
   },
 
   getById(id: string) {

@@ -1,96 +1,25 @@
 import { motion } from "framer-motion";
-import { FaFire, FaArrowRight, FaShoppingBag } from "react-icons/fa";
+import {  FaArrowRight, FaShoppingBag, FaHeart } from "react-icons/fa";
+import { useProducts } from "../../hooks/useProducts";
 
-interface JerseyProduct {
-  id: number;
-  name: string;
-  team: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  isNew: boolean;
-}
+// interface Products {
+//   id: number;
+//   name: string;
+//   team: string;
+//   price: number;
+//   originalPrice?: number;
+//   image: string;
+//   isNew: boolean;
+// }
 
 const NewArrivals = () => {
-  const jerseyProducts: JerseyProduct[] = [
-    {
-      id: 1,
-      name: "Classic Home Jersey",
-      team: "Manchester United",
-      price: 79.99,
-      originalPrice: 99.99,
-      image:
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
-      isNew: true,
-    },
-    {
-      id: 2,
-      name: "Premium Away Jersey",
-      team: "Liverpool",
-      price: 89.99,
-      originalPrice: 119.99,
-      image:
-        "https://images.unsplash.com/photo-1554830591-0bedd4b59a47?w=400&h=400&fit=crop",
-      isNew: true,
-    },
-    {
-      id: 3,
-      name: "Retro Classic Jersey",
-      team: "AC Milan",
-      price: 84.99,
-      image:
-        "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=400&fit=crop",
-      isNew: true,
-    },
-    {
-      id: 4,
-      name: "Elite Performance Jersey",
-      team: "Barcelona",
-      price: 94.99,
-      originalPrice: 124.99,
-      image:
-        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
-      isNew: true,
-    },
-    {
-      id: 5,
-      name: "Youth Training Jersey",
-      team: "Real Madrid",
-      price: 59.99,
-      image:
-        "https://images.unsplash.com/photo-1516762519002-42a76b1cea69?w=400&h=400&fit=crop",
-      isNew: true,
-    },
-    {
-      id: 6,
-      name: "Vintage Edition Jersey",
-      team: "Chelsea",
-      price: 74.99,
-      image:
-        "https://images.unsplash.com/photo-1490306107268-b1bb7c8fef66?w=400&h=400&fit=crop",
-      isNew: true,
-    },
-    {
-      id: 7,
-      name: "Tournament Jersey",
-      team: "Bayern Munich",
-      price: 99.99,
-      originalPrice: 129.99,
-      image:
-        "https://images.unsplash.com/photo-1588868882357-e17ef2d3cbd4?w=400&h=400&fit=crop",
-      isNew: true,
-    },
-    {
-      id: 8,
-      name: "Limited Edition Jersey",
-      team: "PSG",
-      price: 109.99,
-      originalPrice: 149.99,
-      image:
-        "https://images.unsplash.com/photo-1591090529796-7137dd9c7679?w=400&h=400&fit=crop",
-      isNew: true,
-    },
-  ];
+  // now i get all products form the api
+const { data: products = [], isLoading } = useProducts();
+
+  if(isLoading) return <div>Loading...</div>;
+
+  console.log(products, "from NewArrivals");
+  
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -181,9 +110,9 @@ const NewArrivals = () => {
           viewport={{ once: true, amount: 0.3 }}
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
         >
-          {jerseyProducts.map((product) => (
+          {products.map((product) => (
             <motion.div
-              key={product.id}
+              key={product._id}
               variants={itemVariants}
               whileHover="hover"
               className="group relative"
@@ -192,13 +121,13 @@ const NewArrivals = () => {
                 {/* Image - Same Height and Width */}
                 <div className="relative overflow-hidden bg-gray-100 aspect-square">
                   <img
-                    src={product.image}
-                    alt={product.name}
+                    src={product.imageUrl}
+                    alt={product.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
 
                   {/* New Badge */}
-                  {product.isNew && (
+                  {/* {product.isNew && (
                     <motion.div
                       initial={{ scale: 0, rotate: -45 }}
                       whileInView={{ scale: 1, rotate: 0 }}
@@ -209,10 +138,10 @@ const NewArrivals = () => {
                       <FaFire className="w-3 h-3" />
                       New
                     </motion.div>
-                  )}
+                  )} */}
 
                   {/* Discount Badge */}
-                  {product.originalPrice && (
+                  {/* {product.price && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       whileHover={{ opacity: 1 }}
@@ -226,24 +155,18 @@ const NewArrivals = () => {
                       )}
                       %
                     </motion.div>
-                  )}
+                  )} */}
 
-                  {/* Quick Add Button */}
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    whileHover={{ opacity: 1, y: 0 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all duration-300 whitespace-nowrap text-sm"
-                  >
-                    <FaShoppingBag className="w-4 h-4" />
-                    Add
-                  </motion.button>
+                  {/* Heart Icon */}
+                  <button className="absolute bottom-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full text-gray-400 hover:text-red-500 transition-colors">
+                    <FaHeart className="w-4 h-4" />
+                  </button>
                 </div>
 
                 {/* Content - Same Layout */}
                 <div className="p-4 flex flex-col grow">
                   <p className="text-gray-500 text-xs mb-2 uppercase tracking-wider">
-                    {product.team}
+                    {product.title}
                   </p>
                   <motion.h3
                     className="text-sm font-bold text-slate-900 line-clamp-2 mb-3 group-hover:text-blue-600 transition-colors duration-300 h-10"
@@ -252,19 +175,24 @@ const NewArrivals = () => {
                     transition={{ delay: 0.1 }}
                     viewport={{ once: true }}
                   >
-                    {product.name}
+                    {product.shortDescription}
                   </motion.h3>
 
-                  {/* Price */}
-                  <div className="flex items-center gap-2 mt-auto">
-                    <span className="text-lg md:text-xl font-bold text-slate-900">
-                      ${product.price}
-                    </span>
-                    {product.originalPrice && (
-                      <span className="text-xs md:text-sm text-gray-400 line-through">
-                        ${product.originalPrice}
+                  {/* Price and Cart */}
+                  <div className="flex items-center justify-between mt-auto">
+                    <div className="flex flex-col">
+                      <span className="text-lg md:text-xl font-bold text-slate-900">
+                        ${product.price}
                       </span>
-                    )}
+                      {product.price && (
+                        <span className="text-xs md:text-sm text-gray-400 line-through">
+                          ${product.price + 20}
+                        </span>
+                      )}
+                    </div>
+                    <button className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                      <FaShoppingBag className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               </div>
