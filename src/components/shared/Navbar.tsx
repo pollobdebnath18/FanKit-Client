@@ -33,7 +33,7 @@ const Navbar: FC = () => {
     if (isPending) {
       return <nav className="navbar">Loading...</nav>;
     }
-  console.log(session);
+  // console.log(session);
 
   const menuVariants = {
     hidden: { opacity: 0, y: -20 },

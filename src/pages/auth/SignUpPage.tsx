@@ -82,13 +82,14 @@ const SignUpPage = () => {
 
     setIsSubmitting(true);
     setServerError("");
+    
 
     try {
      const result = await authClient.signUp.email({
        email: formData.email,
        password: formData.password,
        name: formData.name,
-       callbackURL: "/",
+       
      });
 
      console.log(result);
