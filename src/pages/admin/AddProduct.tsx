@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from "react";
 import { FaSpinner, FaImage } from "react-icons/fa";
+import { ProductAPI } from "../../api/product.api";
 
 interface ProductFormData {
   title: string;
@@ -131,56 +132,41 @@ const AddProduct = () => {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setServerError("");
-    setSuccessMessage("");
+ const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+   event.preventDefault();
 
-    if (!validate()) return;
+   setServerError("");
+   setSuccessMessage("");
 
-    setIsSubmitting(true);
+   if (!validate()) return;
 
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_AUTH_API_URL}/api/products`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // sends the Better Auth session cookie
-          body: JSON.stringify({
-            title: formData.title.trim(),
-            team: formData.team.trim(),
-            category: formData.category,
-            shortDescription: formData.shortDescription.trim(),
-            fullDescription: formData.fullDescription.trim(),
-            price: Number(formData.price),
-            stock: Number(formData.stock),
-            sizes: formData.sizes,
-            imageUrl: formData.imageUrl.trim() || null,
-          }),
-        },
-      );
+   setIsSubmitting(true);
 
-      const result = await response.json();
+   try {
+     await ProductAPI.create({
+       title: formData.title.trim(),
+       team: formData.team.trim(),
+       category: formData.category,
+       shortDescription: formData.shortDescription.trim(),
+       fullDescription: formData.fullDescription.trim(),
+       price: Number(formData.price),
+       stock: Number(formData.stock),
+       sizes: formData.sizes,
+       imageUrl: formData.imageUrl.trim() || null,
+     });
 
-      if (!response.ok) {
-        throw new Error(result?.message || "Failed to add product.");
-      }
-
-      setSuccessMessage("Jersey added successfully!");
-      setFormData(initialFormData);
-    } catch (error) {
-      setServerError(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong. Please try again.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+     setSuccessMessage("Jersey added successfully!");
+     setFormData(initialFormData);
+   } catch (error) {
+     setServerError(
+       error instanceof Error
+         ? error.message
+         : "Something went wrong. Please try again.",
+     );
+   } finally {
+     setIsSubmitting(false);
+   }
+ };
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
