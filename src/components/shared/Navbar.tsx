@@ -12,28 +12,34 @@ import {
 import logo from "../../assets/fankit-logo.svg";
 import { authClient } from "../../lib/auth-client";
 
-interface NavItem {
-  label: string;
-  href: string;
-}
 
-const navItems: NavItem[] = [
-  { label: "Shop", href: "/shop" },
-  { label: "Collections", href: "/collections" },
-  { label: "Players", href: "/players" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
+
 
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const {data:session , isPending} = authClient.useSession();
-    if (isPending) {
-      return <nav className="navbar">Loading...</nav>;
-    }
+  const { data: session, isPending } = authClient.useSession();
+  if (isPending) {
+    return <nav className="navbar">Loading...</nav>;
+  }
   // console.log(session);
+
+  const navItems = [
+    { label: "Home", href: "/" },
+    { label: "About", href: "/about" },
+    { label: "Collections", href: "/collections" },
+
+    // Show only after login
+    ...(session?.user
+      ? [
+          { label: "Shop", href: "/shop" },
+          { label: "Blog", href: "/blog" },
+        ]
+      : []),
+
+    { label: "Contact", href: "/contact" },
+  ];
 
   const menuVariants = {
     hidden: { opacity: 0, y: -20 },

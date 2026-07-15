@@ -1,5 +1,21 @@
 import { apiClient } from "./apiClient";
 
+export interface Review {
+  id: string;
+  author: string;
+  rating: number;
+  comment: string;
+  date?: string;
+}
+
+export interface RelatedProduct {
+  _id: string;
+  title: string;
+  price: number;
+  imageUrl?: string;
+  images?: string[];
+}
+
 export interface Product {
   _id: string;
   title: string;
@@ -8,36 +24,57 @@ export interface Product {
   team: string;
   category: string;
   price: number;
+  discountPrice?: number | null;
   stock: number;
   sizes: string[];
-  imageUrl: string;
+  images: string[];
+  /** @deprecated kept for backward compatibility with older single-image records */
+  imageUrl?: string;
+  brand?: string;
+  season?: string;
+  sku?: string;
+  tags?: string[];
+  allowCustomization?: boolean;
+  isFeatured?: boolean;
+  status?: "draft" | "published";
+  reviews?: Review[];
+  relatedProducts?: RelatedProduct[];
   createdAt: string;
+  updatedAt?: string;
 }
+
+export type CreateProduct = Omit<Product, "_id" | "createdAt" | "updatedAt">;
+
 export const ProductAPI = {
+  // Get all products
   getAll() {
     return apiClient<Product[]>("/api/products");
   },
 
+  // Get single product
   getById(id: string) {
-    return apiClient(`/api/products/${id}`);
+    return apiClient<Product>(`/api/products/${id}`);
   },
 
-  create(product: unknown) {
-    return apiClient("/api/products", {
+  // Create product
+  create(product: CreateProduct) {
+    return apiClient<Product>("/api/products", {
       method: "POST",
       body: JSON.stringify(product),
     });
   },
 
-  update(id: string, product: unknown) {
-    return apiClient(`/api/products/${id}`, {
+  // Update product
+  update(id: string, product: Partial<CreateProduct>) {
+    return apiClient<Product>(`/api/products/${id}`, {
       method: "PATCH",
       body: JSON.stringify(product),
     });
   },
 
+  // Delete product
   delete(id: string) {
-    return apiClient(`/api/products/${id}`, {
+    return apiClient<{ message: string }>(`/api/products/${id}`, {
       method: "DELETE",
     });
   },

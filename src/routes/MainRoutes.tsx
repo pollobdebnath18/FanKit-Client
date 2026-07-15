@@ -4,6 +4,11 @@ import HomePage from "../pages/homepage/HomePage";
 import SignInPage from "../pages/auth/SignInPage";
 import SignUpPage from "../pages/auth/SignUpPage";
 import ErrorPage from "../components/error/ErrorPage";
+import ProductDetails from "../pages/products/ProductDetails";
+import Shop from "../pages/shop/Shop";
+import About from "../pages/about/About";
+import Contact from "../pages/contact/Contact";
+import Blog from "../pages/blog/Blog";
 
 export const MainRoutes = {
   path: "/",
@@ -15,20 +20,22 @@ export const MainRoutes = {
       index: true,
       element: <HomePage />,
     },
+    { path: "products/:id", Component: ProductDetails },
+    { path: "/", element: <h1>Home</h1> },
+    {
+      path: "about",
+     Component: About,
+    },
+    {path : "blog", Component : Blog},
 
     {
       path: "shop",
-      element: <h1>Shop</h1>,
-    },
-
-    {
-      path: "about",
-      element: <h1>About</h1>,
+      Component: Shop,
     },
 
     {
       path: "contact",
-      element: <h1>Contact</h1>,
+     Component : Contact,
     },
 
     {

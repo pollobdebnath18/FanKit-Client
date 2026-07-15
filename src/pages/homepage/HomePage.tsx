@@ -7,7 +7,6 @@ import PopularJerseys from "../../components/homepage/PopularJerseys";
 import Service from "../../components/homepage/Service";
 import Statistics from "../../components/homepage/Statistics";
 import Testimonials from "../../components/homepage/Testimonials";
-import Footer from "../../components/shared/Footer";
 
 const HomePage = () => {
   return (
@@ -30,7 +29,7 @@ const HomePage = () => {
 
       {/* Conversions & Footer */}
       <Newsletter />
-      <Footer />
+      
     </div>
   );
 };

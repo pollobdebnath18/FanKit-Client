@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { ProductAPI } from "../api/product.api";
+import { ProductAPI, type Product } from "../api/product.api";
 
 export const useProducts = () => {
-  return useQuery({
+  return useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: ProductAPI.getAll,
   });
