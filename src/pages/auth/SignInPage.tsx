@@ -72,6 +72,7 @@ const SignInPage = () => {
        throw new Error(error.message || "Invalid email or password.");
      }
 
+
      navigate("/", {
        replace: true,
      });

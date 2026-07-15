@@ -9,6 +9,7 @@ import Shop from "../pages/shop/Shop";
 import About from "../pages/about/About";
 import Contact from "../pages/contact/Contact";
 import Blog from "../pages/blog/Blog";
+// import Collections from "../pages/collections/Collections";
 
 export const MainRoutes = {
   path: "/",
@@ -24,18 +25,18 @@ export const MainRoutes = {
     { path: "/", element: <h1>Home</h1> },
     {
       path: "about",
-     Component: About,
+      Component: About,
     },
-    {path : "blog", Component : Blog},
+    { path: "blog", Component: Blog },
 
     {
       path: "shop",
       Component: Shop,
     },
-
+    // { path: "collections", Component: Collections },
     {
       path: "contact",
-     Component : Contact,
+      Component: Contact,
     },
 
     {

@@ -82,23 +82,21 @@ const SignUpPage = () => {
 
     setIsSubmitting(true);
     setServerError("");
-    
 
     try {
-     const result = await authClient.signUp.email({
-       email: formData.email,
-       password: formData.password,
-       name: formData.name,
-       
-     });
+      const result = await authClient.signUp.email({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        
+      });
 
-     console.log(result);
-
-     const { data, error } = result;
+      const { data, error } = result;
 
       if (error) {
         throw new Error(error.message || "Unable to create your account.");
       }
+      console.log(data.user);
 
       if (data?.user) {
         navigate("/");
