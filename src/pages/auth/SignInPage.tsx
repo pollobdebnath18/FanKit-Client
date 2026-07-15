@@ -25,8 +25,6 @@ const SignInPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
 
-  
-
   const validate = () => {
     const nextErrors: SignInErrors = {};
 
@@ -52,40 +50,55 @@ const SignInPage = () => {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
- const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-   event.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-   if (!validate()) return;
+    if (!validate()) return;
 
-   setIsSubmitting(true);
-   setServerError("");
+    setIsSubmitting(true);
+    setServerError("");
 
-   try {
-     const { data, error } = await authClient.signIn.email({
-       email: formData.email,
-       password: formData.password,
-     });
+    try {
+      const { data, error } = await authClient.signIn.email({
+        email: formData.email,
+        password: formData.password,
+      });
 
-     console.log({ data, error });
+      type AuthUser = {
+        id: string;
+        name: string;
+        email: string;
+        emailVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+        role?: string;
+      };
 
-     if (error) {
-       throw new Error(error.message || "Invalid email or password.");
-     }
+      const user = data?.user as AuthUser;
 
+      console.log(user.role);
 
-     navigate("/", {
-       replace: true,
-     });
-   } catch (err) {
-     setServerError(
-       err instanceof Error
-         ? err.message
-         : "Unable to sign in. Please try again.",
-     );
-   } finally {
-     setIsSubmitting(false);
-   }
- };
+      if (error) {
+        throw new Error(error.message || "Invalid email or password.");
+      }
+
+      if (user.role === "admin") {
+        navigate("/admin/dashboard");
+        return;
+      }
+      navigate("/", {
+        replace: true,
+      });
+    } catch (err) {
+      setServerError(
+        err instanceof Error
+          ? err.message
+          : "Unable to sign in. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15),transparent_45%)] px-4">

@@ -9,6 +9,7 @@ import Shop from "../pages/shop/Shop";
 import About from "../pages/about/About";
 import Contact from "../pages/contact/Contact";
 import Blog from "../pages/blog/Blog";
+import Collections from "../pages/collections/Collections";
 // import Collections from "../pages/collections/Collections";
 
 export const MainRoutes = {
@@ -33,7 +34,7 @@ export const MainRoutes = {
       path: "shop",
       Component: Shop,
     },
-    // { path: "collections", Component: Collections },
+    { path: "collections", Component: Collections },
     {
       path: "contact",
       Component: Contact,

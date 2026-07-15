@@ -1,148 +1,164 @@
-import { useMemo, useState } from "react";
+import {
+  FaArrowRight,
+  FaShieldAlt,
+  FaShippingFast,
+  FaUndoAlt,
+} from "react-icons/fa";
 import { Link } from "react-router";
-import { FaSearch, FaShoppingBag } from "react-icons/fa";
-import { useProducts } from "../../hooks/useProducts";
 
 const Shop = () => {
-  const { data: products = [], isLoading } = useProducts();
-
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
-  const [team, setTeam] = useState("All");
-
-  const categories = useMemo(() => {
-    return ["All", ...new Set(products.map((product) => product.category))];
-  }, [products]);
-
-  const teams = useMemo(() => {
-    return ["All", ...new Set(products.map((product) => product.team))];
-  }, [products]);
-
-  const filteredProducts = products.filter((product) => {
-    const matchSearch =
-      product.title.toLowerCase().includes(search.toLowerCase()) ||
-      product.shortDescription.toLowerCase().includes(search.toLowerCase());
-
-    const matchCategory = category === "All" || product.category === category;
-
-    const matchTeam = team === "All" || product.team === team;
-
-    return matchSearch && matchCategory && matchTeam;
-  });
-
   return (
-    <section className="bg-slate-50 min-h-screen py-10">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Hero */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-slate-900">Shop Jerseys</h1>
+    <section className="bg-slate-50 min-h-screen">
+      {/* Hero */}
+      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-cyan-500 text-white">
+        <div className="max-w-7xl mx-auto px-6 py-24">
+          <div className="max-w-2xl">
+            <p className="uppercase tracking-[0.3em] text-sm text-blue-100 mb-3">
+              Official Football Jerseys
+            </p>
 
-          <p className="text-gray-500 mt-3">
-            Explore our latest football jersey collection.
-          </p>
-        </div>
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+              Wear Your Team.
+              <br />
+              Live The Game.
+            </h1>
 
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm p-5 mb-8">
-          <div className="grid md:grid-cols-4 gap-4">
-            {/* Search */}
-            <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <p className="mt-6 text-lg text-blue-100">
+              Explore premium football jerseys inspired by the biggest clubs and
+              national teams. Authentic style, premium quality and worldwide
+              passion.
+            </p>
 
-              <input
-                type="text"
-                placeholder="Search jerseys..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full border rounded-lg py-2 pl-10 pr-3 outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Link
+                to="/collections"
+                className="btn bg-white text-blue-700 hover:bg-slate-100 border-none"
+              >
+                Browse Collection
+                <FaArrowRight />
+              </Link>
 
-            {/* Category */}
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="border rounded-lg p-2"
-            >
-              {categories.map((cat) => (
-                <option key={cat}>{cat}</option>
-              ))}
-            </select>
-
-            {/* Team */}
-            <select
-              value={team}
-              onChange={(e) => setTeam(e.target.value)}
-              className="border rounded-lg p-2"
-            >
-              {teams.map((item) => (
-                <option key={item}>{item}</option>
-              ))}
-            </select>
-
-            {/* Product Count */}
-            <div className="flex items-center justify-center bg-blue-600 text-white rounded-lg font-semibold">
-              {filteredProducts.length} Products
+              <Link
+                to="/about"
+                className="btn btn-outline border-white text-white hover:bg-white hover:text-blue-700"
+              >
+                Learn More
+              </Link>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Loading */}
-        {isLoading && (
-          <div className="text-center py-20 text-xl">Loading...</div>
-        )}
+      {/* Features */}
 
-        {/* Empty */}
-        {!isLoading && filteredProducts.length === 0 && (
-          <div className="text-center py-20">
-            <h2 className="text-2xl font-semibold">No Products Found</h2>
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+            <div className="w-16 h-16 mx-auto rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-2xl">
+              <FaShippingFast />
+            </div>
 
-            <p className="text-gray-500 mt-2">
-              Try changing the search or filters.
+            <h3 className="mt-6 text-xl font-semibold">Fast Delivery</h3>
+
+            <p className="mt-3 text-gray-500">
+              Quick shipping with reliable packaging to keep your jersey safe.
             </p>
           </div>
-        )}
 
-        {/* Product Grid */}
-        {!isLoading && filteredProducts.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <Link key={product._id} to={`/products/${product._id}`}>
-                <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-xl transition duration-300 h-full">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.title}
-                    className="w-full aspect-square object-cover"
-                  />
+          <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+            <div className="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center text-green-600 text-2xl">
+              <FaShieldAlt />
+            </div>
 
-                  <div className="p-4 flex flex-col h-[180px]">
-                    <span className="text-sm text-gray-500 uppercase">
-                      {product.team}
-                    </span>
+            <h3 className="mt-6 text-xl font-semibold">Premium Quality</h3>
 
-                    <h2 className="font-semibold text-lg mt-1 line-clamp-2">
-                      {product.title}
-                    </h2>
-
-                    <p className="text-gray-500 text-sm mt-2 line-clamp-2">
-                      {product.shortDescription}
-                    </p>
-
-                    <div className="mt-auto flex items-center justify-between">
-                      <span className="text-xl font-bold text-blue-600">
-                        ${product.price}
-                      </span>
-
-                      <button className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">
-                        <FaShoppingBag />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+            <p className="mt-3 text-gray-500">
+              Carefully selected fabrics with comfort and durability in mind.
+            </p>
           </div>
-        )}
+
+          <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+            <div className="w-16 h-16 mx-auto rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-2xl">
+              <FaUndoAlt />
+            </div>
+
+            <h3 className="mt-6 text-xl font-semibold">Easy Returns</h3>
+
+            <p className="mt-3 text-gray-500">
+              Hassle-free return policy for a worry-free shopping experience.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* About */}
+
+      <div className="max-w-7xl mx-auto px-6 pb-20">
+        <div className="bg-white rounded-3xl shadow-sm p-10 lg:p-16">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl font-bold text-slate-900">
+                More Than Just Jerseys
+              </h2>
+
+              <p className="mt-5 text-gray-600 leading-8">
+                FanKit is built for football lovers who want to represent their
+                favorite teams with confidence. Whether you're cheering from the
+                stadium or watching from home, our collection helps you stay
+                connected to the game.
+              </p>
+
+              <p className="mt-4 text-gray-600 leading-8">
+                Browse hundreds of jerseys from international teams, club
+                legends, and special edition collections.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div className="rounded-2xl bg-blue-50 p-8">
+                <h3 className="text-4xl font-bold text-blue-600">100+</h3>
+
+                <p className="mt-2 text-gray-600">Jerseys Available</p>
+              </div>
+
+              <div className="rounded-2xl bg-cyan-50 p-8">
+                <h3 className="text-4xl font-bold text-cyan-600">50+</h3>
+
+                <p className="mt-2 text-gray-600">National Teams</p>
+              </div>
+
+              <div className="rounded-2xl bg-green-50 p-8">
+                <h3 className="text-4xl font-bold text-green-600">5★</h3>
+
+                <p className="mt-2 text-gray-600">Customer Rating</p>
+              </div>
+
+              <div className="rounded-2xl bg-orange-50 p-8">
+                <h3 className="text-4xl font-bold text-orange-600">24/7</h3>
+
+                <p className="mt-2 text-gray-600">Customer Support</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA */}
+
+      <div className="bg-slate-900 text-white">
+        <div className="max-w-7xl mx-auto px-6 py-20 text-center">
+          <h2 className="text-4xl font-bold">Ready to Find Your Jersey?</h2>
+
+          <p className="mt-4 text-slate-300 max-w-2xl mx-auto">
+            Explore our complete collection and discover your favorite team's
+            latest jerseys.
+          </p>
+
+          <Link to="/collections" className="btn btn-primary mt-8">
+            Explore Collection
+            <FaArrowRight />
+          </Link>
+        </div>
       </div>
     </section>
   );

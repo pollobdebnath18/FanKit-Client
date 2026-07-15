@@ -99,6 +99,23 @@ const SignUpPage = () => {
       console.log(data.user);
 
       if (data?.user) {
+        await fetch(`${import.meta.env.VITE_AUTH_API_URL}/api/users/set-role`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: data.user.email,
+          }),
+        });
+
+        navigate("/");
+        alert("Account created successfully");
+      }
+
+      
+
+      if (data?.user) {
         navigate("/");
         alert("Account created successfully");
       } else {
