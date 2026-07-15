@@ -64,6 +64,9 @@ const SignInPage = () => {
         password: formData.password,
       });
 
+      console.log("DATA:", data);
+      console.log("ERROR:", error);
+
       type AuthUser = {
         id: string;
         name: string;
@@ -74,13 +77,13 @@ const SignInPage = () => {
         role?: string;
       };
 
-      const user = data?.user as AuthUser;
-
-      console.log(user.role);
-
       if (error) {
         throw new Error(error.message || "Invalid email or password.");
       }
+
+      const user = data?.user as AuthUser;
+
+      console.log(user.role);
 
       if (user.role === "admin") {
         navigate("/admin/dashboard");

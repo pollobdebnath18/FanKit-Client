@@ -12,6 +12,7 @@ import {
 import logo from "../../assets/fankit-logo.svg";
 import { authClient } from "../../lib/auth-client";
 // import { useCurrentUser } from "../../hooks/useCurrentUser";
+// import { useCurrentUser } from "../../hooks/useCurrentUser";
 
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +20,7 @@ const Navbar: FC = () => {
 
   const { data: session, isPending, } = authClient.useSession();
   // const { currentUser } = useCurrentUser();
-  // console.log(currentUser);
+  // console.log(currentUser , 'currentuser');
 
 
   console.log("Session:", session);

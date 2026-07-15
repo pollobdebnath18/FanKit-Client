@@ -109,15 +109,8 @@ const SignUpPage = () => {
           }),
         });
 
-        navigate("/");
         alert("Account created successfully");
-      }
-
-      
-
-      if (data?.user) {
         navigate("/");
-        alert("Account created successfully");
       } else {
         throw new Error("Registration completed, but no user was returned.");
       }
