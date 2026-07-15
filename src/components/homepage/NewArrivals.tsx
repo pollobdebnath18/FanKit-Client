@@ -67,7 +67,6 @@ const NewArrivals = () => {
                     <img
                       src={
                         product.imageUrl ||
-                        product.images?.[0] ||
                         "https://placehold.co/600x600?text=No+Image"
                       }
                       alt={product.title}
