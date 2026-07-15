@@ -11,7 +11,7 @@ interface ProductFormData {
   price: string;
   stock: string;
   sizes: string[];
-  imageUrl: string;
+  imageUrl: string ;
 }
 
 interface ProductFormErrors {
@@ -152,7 +152,7 @@ const AddProduct = () => {
        price: Number(formData.price),
        stock: Number(formData.stock),
        sizes: formData.sizes,
-       imageUrl: formData.imageUrl.trim() || null,
+       imageUrl: formData.imageUrl.trim() !== ""? formData.imageUrl.trim() :  undefined,
      });
 
      setSuccessMessage("Jersey added successfully!");

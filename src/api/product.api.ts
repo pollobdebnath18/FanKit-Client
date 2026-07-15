@@ -13,7 +13,6 @@ export interface RelatedProduct {
   title: string;
   price: number;
   imageUrl?: string;
-  images?: string[];
 }
 
 export interface Product {
@@ -27,9 +26,10 @@ export interface Product {
   discountPrice?: number | null;
   stock: number;
   sizes: string[];
-  images: string[];
-  /** @deprecated kept for backward compatibility with older single-image records */
+
+  // Single image
   imageUrl?: string;
+
   brand?: string;
   season?: string;
   sku?: string;
@@ -37,13 +37,35 @@ export interface Product {
   allowCustomization?: boolean;
   isFeatured?: boolean;
   status?: "draft" | "published";
+
   reviews?: Review[];
   relatedProducts?: RelatedProduct[];
+
   createdAt: string;
   updatedAt?: string;
 }
 
-export type CreateProduct = Omit<Product, "_id" | "createdAt" | "updatedAt">;
+export interface CreateProduct {
+  title: string;
+  shortDescription: string;
+  fullDescription: string;
+  team: string;
+  category: string;
+  price: number;
+  stock: number;
+  sizes: string[];
+
+  imageUrl?: string;
+
+  discountPrice?: number | null;
+  brand?: string;
+  season?: string;
+  sku?: string;
+  tags?: string[];
+  allowCustomization?: boolean;
+  isFeatured?: boolean;
+  status?: "draft" | "published";
+}
 
 export const ProductAPI = {
   // Get all products

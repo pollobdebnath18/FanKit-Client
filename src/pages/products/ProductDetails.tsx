@@ -71,19 +71,16 @@ const ProductDetails = () => {
   }
 
   // ---------- Derived data (permissive, since backend shape may evolve) ----------
-  const images: string[] =
-    product.images?.length > 0
-      ? product.images
-      : product.imageUrl
-        ? [product.imageUrl]
-        : [];
+  const images = product.imageUrl ? [product.imageUrl] : [];
 
-  const hasDiscount =
-    product.discountPrice && product.discountPrice < product.price;
-  const displayPrice = hasDiscount ? product.discountPrice : product.price;
-  const discountPercent = hasDiscount
-    ? Math.round(100 - (product.discountPrice / product.price) * 100)
-    : 0;
+ const hasDiscount =
+   product.discountPrice != null && product.discountPrice < product.price;
+
+ const displayPrice = hasDiscount ? product.discountPrice : product.price;
+
+ const discountPercent = hasDiscount
+   ? Math.round(100 - (product.discountPrice! / product.price) * 100)
+   : 0;
 
   const inStock = (product.stock ?? 0) > 0;
   const sizes: string[] = product.sizes ?? [];
