@@ -12,9 +12,6 @@ import {
 import logo from "../../assets/fankit-logo.svg";
 import { authClient } from "../../lib/auth-client";
 
-
-
-
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
