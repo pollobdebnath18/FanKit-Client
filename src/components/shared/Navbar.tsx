@@ -11,12 +11,20 @@ import {
 } from "react-icons/fa";
 import logo from "../../assets/fankit-logo.svg";
 import { authClient } from "../../lib/auth-client";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
 
 const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending, error } = authClient.useSession();
+  const { currentUser } = useCurrentUser();
+  console.log(currentUser);
+
+  console.log("Session:", session?.user);
+  console.log("Pending:", isPending);
+  console.log("Error:", error);
+
   if (isPending) {
     return <nav className="navbar">Loading...</nav>;
   }
