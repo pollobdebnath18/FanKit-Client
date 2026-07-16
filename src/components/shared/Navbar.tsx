@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import logo from "../../assets/fankit-logo.svg";
 import { authClient } from "../../lib/auth-client";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
 // import { useCurrentUser } from "../../hooks/useCurrentUser";
 // import { useCurrentUser } from "../../hooks/useCurrentUser";
 
@@ -18,15 +19,13 @@ const Navbar: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const { data: session, isPending, } = authClient.useSession();
-  // const { currentUser } = useCurrentUser();
-  // console.log(currentUser , 'currentuser');
+  const { data: session, isPending } = authClient.useSession();
+  const { currentUser , isLoading } = useCurrentUser();
+  console.log(currentUser, "currentuser");
 
+  // console.log("Session:", session);
 
-  console.log("Session:", session);
-  
-
-  if (isPending) {
+  if (isPending || isLoading) {
     return <nav className="navbar">Loading...</nav>;
   }
   // console.log(session);
@@ -37,7 +36,7 @@ const Navbar: FC = () => {
     { label: "Collections", href: "/collections" },
 
     // Show only after login
-    ...(session?.user
+    ...(currentUser
       ? [
           { label: "Shop", href: "/shop" },
           { label: "Blog", href: "/blog" },
