@@ -20,10 +20,7 @@ const Navbar: FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const { data: session, isPending } = authClient.useSession();
-  const { currentUser , isLoading } = useCurrentUser();
-  console.log(currentUser, "currentuser");
-
-  // console.log("Session:", session);
+  const { currentUser, isLoading } = useCurrentUser();
 
   if (isPending || isLoading) {
     return <nav className="navbar">Loading...</nav>;
