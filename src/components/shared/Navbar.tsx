@@ -22,9 +22,6 @@ const Navbar: FC = () => {
   const { data: session, isPending } = authClient.useSession();
   const { currentUser, isLoading } = useCurrentUser();
 
-  if (isPending || isLoading) {
-    return <nav className="navbar">Loading...</nav>;
-  }
   // console.log(session);
 
   const navItems = [
@@ -133,9 +130,8 @@ const Navbar: FC = () => {
               </Link>
             </motion.div>
 
-            {/* Auth Buttons - Desktop */}
             <div className="hidden md:flex items-center gap-3">
-              {isPending ? (
+              {isPending || isLoading ? (
                 <span className="loading loading-spinner loading-sm"></span>
               ) : session?.user ? (
                 <>
@@ -276,7 +272,11 @@ const Navbar: FC = () => {
 
                 {/* Auth Mobile Menu */}
                 <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-200">
-                  {session?.user ? (
+                  {isPending || isLoading ? (
+                    <div className="flex justify-center py-2">
+                      <span className="loading loading-spinner loading-sm"></span>
+                    </div>
+                  ) : session?.user ? (
                     <>
                       <div className="flex items-center gap-3 px-2 py-2">
                         <img
