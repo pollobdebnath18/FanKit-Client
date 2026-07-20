@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import logo from "../../assets/fankit-logo.svg";
 import { authClient } from "../../lib/auth-client";
-import { useCurrentUser } from "../../hooks/useCurrentUser";
+// import { useCurrentUser } from "../../hooks/useCurrentUser";
 // import { useCurrentUser } from "../../hooks/useCurrentUser";
 // import { useCurrentUser } from "../../hooks/useCurrentUser";
 
@@ -20,9 +20,9 @@ const Navbar: FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const { data: session, isPending } = authClient.useSession();
-  const { currentUser, isLoading } = useCurrentUser();
+  // const { currentUser, isLoading } = useCurrentUser();
 
-  // console.log(session);
+  console.log("session", session?.user);
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -30,11 +30,11 @@ const Navbar: FC = () => {
     { label: "Collections", href: "/collections" },
 
     // Show only after login
-    ...(currentUser
+    ...(session?.user
       ? [
-          { label: "Shop", href: "/shop" },
-          { label: "Blog", href: "/blog" },
-        ]
+        { label: "Shop", href: "/shop" },
+        { label: "Blog", href: "/blog" },
+      ]
       : []),
 
     { label: "Contact", href: "/contact" },
@@ -131,7 +131,7 @@ const Navbar: FC = () => {
             </motion.div>
 
             <div className="hidden md:flex items-center gap-3">
-              {isPending || isLoading ? (
+              {isPending ? (
                 <span className="loading loading-spinner loading-sm"></span>
               ) : session?.user ? (
                 <>
@@ -272,7 +272,7 @@ const Navbar: FC = () => {
 
                 {/* Auth Mobile Menu */}
                 <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-200">
-                  {isPending || isLoading ? (
+                  {isPending ? (
                     <div className="flex justify-center py-2">
                       <span className="loading loading-spinner loading-sm"></span>
                     </div>
