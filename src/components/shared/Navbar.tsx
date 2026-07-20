@@ -11,6 +11,8 @@ import {
 } from "react-icons/fa";
 import logo from "../../assets/fankit-logo.svg";
 import { authClient } from "../../lib/auth-client";
+// import type { User } from "../../api/user.api";
+
 // import { useCurrentUser } from "../../hooks/useCurrentUser";
 // import { useCurrentUser } from "../../hooks/useCurrentUser";
 // import { useCurrentUser } from "../../hooks/useCurrentUser";
@@ -23,6 +25,8 @@ const Navbar: FC = () => {
   // const { currentUser, isLoading } = useCurrentUser();
 
   console.log("session", session?.user);
+
+
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -41,11 +45,11 @@ const Navbar: FC = () => {
 
     { label: "Contact", href: "/contact" },
     // Show only for admin
-    ...(session?.user?.role === "admin"
-      ? [
-        { label: "Admin", href: "/admin/dashboard" },
-      ]
-      : []),
+    // ...(session?.user?.role === "admin"
+    //   ? [
+    //     { label: "Admin", href: "/admin/dashboard" },
+    //   ]
+    //   : []),
   ];
 
   const menuVariants = {
