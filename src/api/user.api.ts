@@ -3,6 +3,7 @@ export interface User {
   _id: string;
   name: string;
   email: string;
+  // role?: string;
   role: "user" | "admin";
   emailVerified: boolean;
   createdAt: string;

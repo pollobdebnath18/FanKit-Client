@@ -37,7 +37,15 @@ const Navbar: FC = () => {
       ]
       : []),
 
+
+
     { label: "Contact", href: "/contact" },
+    // Show only for admin
+    ...(session?.user?.role === "admin"
+      ? [
+        { label: "Admin", href: "/admin/dashboard" },
+      ]
+      : []),
   ];
 
   const menuVariants = {
@@ -98,10 +106,9 @@ const Navbar: FC = () => {
                 <NavLink
                   to={item.href}
                   className={({ isActive }) =>
-                    `px-4 py-2 font-semibold rounded-lg transition-all ${
-                      isActive
-                        ? "bg-[#0B1F3A] text-white shadow-xs"
-                        : "text-gray-700 hover:bg-[#0B1F3A]/10 hover:text-[#0B1F3A]"
+                    `px-4 py-2 font-semibold rounded-lg transition-all ${isActive
+                      ? "bg-[#0B1F3A] text-white shadow-xs"
+                      : "text-gray-700 hover:bg-[#0B1F3A]/10 hover:text-[#0B1F3A]"
                     }`
                   }
                 >
@@ -269,10 +276,9 @@ const Navbar: FC = () => {
                     <NavLink
                       to={item.href}
                       className={({ isActive }) =>
-                        `block px-4 py-2 font-semibold rounded-lg transition-all ${
-                          isActive
-                            ? "bg-[#0B1F3A] text-white"
-                            : "text-gray-700 hover:bg-[#0B1F3A]/10 hover:text-[#0B1F3A]"
+                        `block px-4 py-2 font-semibold rounded-lg transition-all ${isActive
+                          ? "bg-[#0B1F3A] text-white"
+                          : "text-gray-700 hover:bg-[#0B1F3A]/10 hover:text-[#0B1F3A]"
                         }`
                       }
                       onClick={() => setIsMenuOpen(false)}
