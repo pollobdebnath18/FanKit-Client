@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router";
-import { FaCalendar, FaArrowRight, FaTag, FaUser } from "react-icons/fa";
+import { FaCalendar, FaArrowRight, FaUser } from "react-icons/fa";
 
 interface BlogPost {
   id: number;
@@ -76,11 +76,11 @@ const blogPosts: BlogPost[] = [
 ];
 
 const categoryConfig: Record<string, { bg: string; text: string }> = {
-  Guide:          { bg: "bg-blue-100",   text: "text-blue-700"   },
-  News:           { bg: "bg-[#F5A623]/15", text: "text-[#B07E19]" },
-  Interview:      { bg: "bg-purple-100", text: "text-purple-700"  },
-  Sustainability: { bg: "bg-green-100",  text: "text-green-700"   },
-  Tips:           { bg: "bg-cyan-100",   text: "text-cyan-700"    },
+  Guide: { bg: "bg-blue-100", text: "text-blue-700" },
+  News: { bg: "bg-[#F5A623]/15", text: "text-[#B07E19]" },
+  Interview: { bg: "bg-purple-100", text: "text-purple-700" },
+  Sustainability: { bg: "bg-green-100", text: "text-green-700" },
+  Tips: { bg: "bg-cyan-100", text: "text-cyan-700" },
 };
 
 const Blog = () => {

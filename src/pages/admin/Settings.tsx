@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaStore, FaCreditCard, FaLock, FaBell, FaCheckCircle, FaTrashAlt } from "react-icons/fa";
+import { FaStore, FaCreditCard, FaLock, FaBell, FaCheckCircle } from "react-icons/fa";
 
 const Settings = () => {
   const [storeName, setStoreName] = useState("FanKit Jersey Store");

@@ -172,10 +172,12 @@ const Analytics = () => {
                     paddingAngle={5}
                     dataKey="value"
                   >
-                    {categoryData.map((entry, index) => (
+                    {categoryData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+
                     ))}
                   </Pie>
+
                   <Tooltip formatter={(value) => `${value}%`} />
                 </PieChart>
               </ResponsiveContainer>
@@ -226,7 +228,7 @@ const Analytics = () => {
                 <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} />
                 <Tooltip />
                 <Bar dataKey="count" name="Orders Count" fill="#0B1F3A" radius={[4, 4, 0, 0]}>
-                  {PIE_COLORS.map((color, index) => (
+                  {PIE_COLORS.map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={index === 0 ? "#0B1F3A" : index === 1 ? "#F5A623" : "#1e293b"}

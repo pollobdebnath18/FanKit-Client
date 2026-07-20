@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import {
   FaSearch,
   FaUserTag,
@@ -153,10 +152,10 @@ const Users = () => {
 
                     const dateStr = user.createdAt
                       ? new Date(user.createdAt).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })
                       : "N/A";
 
                     return (
@@ -190,11 +189,10 @@ const Users = () => {
                         </td>
                         <td className="px-6 py-4">
                           <span
-                            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                              user.role === "admin"
+                            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${user.role === "admin"
                                 ? "bg-[#0B1F3A] text-white"
                                 : "bg-slate-100 text-slate-700"
-                            }`}
+                              }`}
                           >
                             {user.role}
                           </span>

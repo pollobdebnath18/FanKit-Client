@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import {
   FaSearch,
   FaFilter,
@@ -196,11 +195,10 @@ const Orders = () => {
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all ${
-                  statusFilter === status
+                className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all ${statusFilter === status
                     ? "bg-[#0B1F3A] text-white shadow-xs"
                     : "text-slate-500 hover:text-slate-800"
-                }`}
+                  }`}
               >
                 {status}
               </button>

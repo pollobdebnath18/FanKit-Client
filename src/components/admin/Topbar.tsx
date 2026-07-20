@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router";
 import {
-  FaSearch,
   FaBell,
   FaChevronDown,
   FaSignOutAlt,
@@ -56,7 +55,7 @@ const Topbar = () => {
   const displayRole = currentUser?.role ?? "admin";
   const initials = displayName
     .split(" ")
-    .map((part:string) => part[0])
+    .map((part: string) => part[0])
     .slice(0, 2)
     .join("")
     .toUpperCase();
@@ -114,9 +113,8 @@ const Topbar = () => {
               {displayName}
             </span>
             <FaChevronDown
-              className={`hidden text-xs text-slate-400 transition-transform sm:block ${
-                isDropdownOpen ? "rotate-180" : ""
-              }`}
+              className={`hidden text-xs text-slate-400 transition-transform sm:block ${isDropdownOpen ? "rotate-180" : ""
+                }`}
             />
           </button>
 
