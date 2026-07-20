@@ -17,7 +17,7 @@ const Newsletter = () => {
         setSubscribed(true);
         setEmail("");
         setIsLoading(false);
-        setTimeout(() => setSubscribed(false), 4000);
+        setTimeout(() => setSubscribed(false), 2000);
       } else {
         setIsLoading(false);
       }
@@ -55,7 +55,7 @@ const Newsletter = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
-          className="relative bg-linear-to-br from-blue-600 via-blue-500 to-cyan-600 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl"
+          className="relative bg-gradient-to-br from-[#0B1F3A] via-[#1A3A5C] to-[#0D3060] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl"
         >
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
@@ -150,7 +150,7 @@ const Newsletter = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
                     required
-                    className="w-full px-5 md:px-6 py-3 md:py-4 rounded-lg bg-white text-slate-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+                    className="w-full px-5 md:px-6 py-3 md:py-4 rounded-lg bg-white text-slate-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F5A623] transition-all duration-300"
                   />
                 </motion.div>
 
@@ -159,11 +159,10 @@ const Newsletter = () => {
                   disabled={isLoading || subscribed}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`w-full py-3 md:py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                    subscribed
+                  className={`w-full py-3 md:py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${subscribed
                       ? "bg-green-500 text-white"
-                      : "bg-white text-blue-600 hover:bg-blue-50"
-                  }`}
+                      : "bg-[#F5A623] text-[#0B1F3A] hover:bg-[#e09518]"
+                    }`}
                 >
                   {isLoading ? (
                     <motion.div

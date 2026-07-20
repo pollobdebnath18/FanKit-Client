@@ -32,7 +32,7 @@ const PopularJerseys = () => {
       rating: 4.9,
       reviews: 542,
       image:
-        "https://images.unsplash.com/photo-1599812675935-79ffe315eed0?w=400&h=500&fit=crop",
+        "https://i.ibb.co.com/S744xhp9/images-q-tbn-ANd9-Gc-Q1-1c-Gal-O-2-NS-ez-l-Ql-S2hy-NNfju740-YOYz0-Gd-Izt-Rp-BQwij-Z0c7-Sgd3-s-10.jpg",
       colors: ["#87CEEB", "#FFFFFF"],
       badge: "GOAT",
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
@@ -47,7 +47,7 @@ const PopularJerseys = () => {
       rating: 4.9,
       reviews: 638,
       image:
-        "https://images.unsplash.com/photo-1577990452668-6c14dd0ebd43?w=400&h=500&fit=crop",
+        "https://i.ibb.co.com/m5gXw8t1/ronldo.jpg",
       colors: ["#DC143C", "#FFFFFF"],
       badge: "Legend",
       sizes: ["S", "M", "L", "XL", "XXL"],
@@ -62,7 +62,7 @@ const PopularJerseys = () => {
       rating: 4.8,
       reviews: 421,
       image:
-        "https://images.unsplash.com/photo-1589818752350-672d889aeb92?w=400&h=500&fit=crop",
+        "https://i.ibb.co.com/whmx501c/neymer.jpg",
       colors: ["#00A651", "#FFCC00"],
       sizes: ["XS", "S", "M", "L", "XL"],
     },
@@ -76,7 +76,7 @@ const PopularJerseys = () => {
       rating: 4.9,
       reviews: 528,
       image:
-        "https://images.unsplash.com/photo-1589818634629-81fceb6088de?w=400&h=500&fit=crop",
+        "https://i.ibb.co.com/YSJPbYS/mbb.jpg",
       colors: ["#002395", "#FFFFFF"],
       badge: "Rising Star",
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
@@ -90,7 +90,7 @@ const PopularJerseys = () => {
       rating: 4.7,
       reviews: 312,
       image:
-        "https://images.unsplash.com/photo-1588868882357-e17ef2d3cbd4?w=400&h=500&fit=crop",
+        "https://i.ibb.co.com/TBHbpbyn/luis.jpg",
       colors: ["#FFFFFF", "#0066CC"],
       sizes: ["M", "L", "XL"],
     },
@@ -104,7 +104,7 @@ const PopularJerseys = () => {
       rating: 4.8,
       reviews: 389,
       image:
-        "https://images.unsplash.com/photo-1591090529796-7137dd9c7679?w=400&h=500&fit=crop",
+        "https://i.ibb.co.com/HDFNBBVT/vini.jpg",
       colors: ["#00A651", "#FFCC00"],
       badge: "Hot",
       sizes: ["XS", "S", "M", "L", "XL"],
@@ -119,20 +119,20 @@ const PopularJerseys = () => {
       rating: 4.7,
       reviews: 298,
       image:
-        "https://images.unsplash.com/photo-1566186286323-a42f4d6a1d88?w=400&h=500&fit=crop",
+        "https://i.ibb.co.com/n8NdgxBD/hery-cn.webp",
       colors: ["#FFFFFF", "#1E90FF"],
       sizes: ["S", "M", "L", "XL", "XXL"],
     },
     {
       id: 8,
-      playerName: "Gianluigi Donnarumma",
-      team: "Italy",
+      playerName: "Lamine Yamal",
+      team: "Spain",
       jerseyNumber: 1,
       price: 89.99,
       rating: 4.6,
       reviews: 245,
       image:
-        "https://images.unsplash.com/photo-1461895511934-ffe936ba3208?w=400&h=500&fit=crop",
+        "https://i.ibb.co.com/vNbZmfH/ymll.webp",
       colors: ["#0066CC", "#FFFFFF"],
       sizes: ["M", "L", "XL"],
     },
@@ -255,11 +255,10 @@ const PopularJerseys = () => {
                     className="absolute top-4 left-4 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-blue-50"
                   >
                     <FaHeart
-                      className={`w-5 h-5 transition-all duration-300 ${
-                        favoriteIds.includes(jersey.id)
-                          ? "text-red-500 fill-current"
-                          : "text-gray-400"
-                      }`}
+                      className={`w-5 h-5 transition-all duration-300 ${favoriteIds.includes(jersey.id)
+                        ? "text-red-500 fill-current"
+                        : "text-gray-400"
+                        }`}
                     />
                   </motion.button>
 
@@ -318,11 +317,10 @@ const PopularJerseys = () => {
                       {[...Array(5)].map((_, i) => (
                         <FaStar
                           key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.floor(jersey.rating)
-                              ? "text-yellow-400"
-                              : "text-gray-300"
-                          }`}
+                          className={`w-4 h-4 ${i < Math.floor(jersey.rating)
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                            }`}
                         />
                       ))}
                     </div>

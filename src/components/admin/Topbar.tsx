@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, Link } from "react-router";
 import {
   FaSearch,
   FaBell,
@@ -63,24 +63,29 @@ const Topbar = () => {
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 pl-16 shadow-sm sm:px-6 lg:pl-6">
-      {/* Page title */}
-      <div>
+      {/* Page title and navigation links */}
+      <div className="flex items-center gap-4">
         <h1 className="text-lg font-bold text-slate-900 sm:text-xl">
           {pageTitle}
         </h1>
+        <div className="hidden sm:flex items-center gap-1.5 text-sm ml-6">
+          <Link
+            to="/"
+            className="px-3 py-1.5 text-slate-600 hover:text-[#0B1F3A] hover:bg-slate-100 rounded-md font-semibold transition-all"
+          >
+            Home
+          </Link>
+          <Link
+            to="/collections"
+            className="px-3 py-1.5 text-slate-600 hover:text-[#0B1F3A] hover:bg-slate-100 rounded-md font-semibold transition-all"
+          >
+            Collection
+          </Link>
+        </div>
       </div>
 
       {/* Right side controls */}
       <div className="flex items-center gap-2 sm:gap-4">
-        {/* Search — hidden on very small screens */}
-        <div className="relative hidden md:block">
-          <FaSearch className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-56 rounded-full border border-slate-200 bg-slate-50 py-2 pl-10 pr-4 text-sm text-slate-700 outline-none transition-colors focus:border-[#E0A421] focus:bg-white lg:w-72"
-          />
-        </div>
 
         {/* Notifications */}
         <button

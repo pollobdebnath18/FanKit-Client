@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FC } from "react";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaShoppingCart,
@@ -95,12 +95,18 @@ const Navbar: FC = () => {
                 initial="hidden"
                 animate="visible"
               >
-                <Link
+                <NavLink
                   to={item.href}
-                  className="px-4 py-2 text-gray-700 font-medium rounded-lg transition-all hover:bg-blue-50 hover:text-blue-600 active:bg-blue-100"
+                  className={({ isActive }) =>
+                    `px-4 py-2 font-semibold rounded-lg transition-all ${
+                      isActive
+                        ? "bg-[#0B1F3A] text-white shadow-xs"
+                        : "text-gray-700 hover:bg-[#0B1F3A]/10 hover:text-[#0B1F3A]"
+                    }`
+                  }
                 >
                   {item.label}
-                </Link>
+                </NavLink>
               </motion.div>
             ))}
           </nav>
@@ -260,13 +266,19 @@ const Navbar: FC = () => {
                     initial="hidden"
                     animate="visible"
                   >
-                    <Link
+                    <NavLink
                       to={item.href}
-                      className="block px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all"
+                      className={({ isActive }) =>
+                        `block px-4 py-2 font-semibold rounded-lg transition-all ${
+                          isActive
+                            ? "bg-[#0B1F3A] text-white"
+                            : "text-gray-700 hover:bg-[#0B1F3A]/10 hover:text-[#0B1F3A]"
+                        }`
+                      }
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {item.label}
-                    </Link>
+                    </NavLink>
                   </motion.div>
                 ))}
 

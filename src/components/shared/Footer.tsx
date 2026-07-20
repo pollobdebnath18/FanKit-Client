@@ -35,7 +35,7 @@ const Footer = () => {
     initial: { x: 0, color: "#a0aec0" },
     hover: {
       x: 5,
-      color: "#64b5f6",
+      color: "#F5A623",
       transition: { duration: 0.3 },
     },
   };
@@ -64,7 +64,7 @@ const Footer = () => {
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
       viewport={{ once: true, amount: 0.3 }}
-      className="bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-gray-300 py-12 md:py-16"
+      className="bg-gradient-to-br from-[#06111f] via-[#0B1F3A] to-[#0a1a30] text-gray-300 py-12 md:py-16"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
@@ -104,7 +104,7 @@ const Footer = () => {
                   variants={socialIconVariants}
                   initial="initial"
                   whileHover="hover"
-                  className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-gray-300 hover:bg-blue-600 transition-colors duration-300"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-[#F5A623] hover:text-[#0B1F3A] transition-colors duration-300"
                 >
                   <Icon className="w-5 h-5" />
                 </motion.a>
@@ -178,7 +178,7 @@ const Footer = () => {
                 initial="initial"
                 whileHover="hover"
                 whileTap="tap"
-                className="w-full px-4 py-2 rounded-lg bg-linear-to-r from-blue-500 to-blue-600 text-white font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
+                className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-[#F5A623] to-[#e09518] text-[#0B1F3A] font-bold hover:from-[#e09518] hover:to-[#c87d10] transition-all duration-300"
               >
                 Subscribe
               </motion.button>
@@ -215,7 +215,7 @@ const Footer = () => {
                 <motion.div
                   initial={{ rotate: 0 }}
                   whileHover={{ rotate: 15 }}
-                  className="shrink-0 w-10 h-10 rounded-lg bg-blue-500 bg-opacity-20 flex items-center justify-center text-blue-400"
+                  className="shrink-0 w-10 h-10 rounded-lg bg-[#F5A623]/15 flex items-center justify-center text-[#F5A623]"
                 >
                   <Icon className="w-5 h-5" />
                 </motion.div>

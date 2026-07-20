@@ -127,7 +127,7 @@ const FAQ = () => {
     initial: { scale: 1, backgroundColor: "transparent" },
     hover: { scale: 1.05 },
     active: {
-      backgroundColor: "rgb(59, 130, 246)",
+      backgroundColor: "#0B1F3A",
       color: "white",
     },
   };
@@ -156,10 +156,10 @@ const FAQ = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
           >
-            <FaQuestionCircle className="w-8 h-8 text-blue-600" />
+            <FaQuestionCircle className="w-8 h-8 text-[#F5A623]" />
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900">
               Frequently Asked{" "}
-              <span className="bg-linear-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#0B1F3A] to-[#F5A623] bg-clip-text text-transparent">
                 Questions
               </span>
             </h2>
@@ -196,7 +196,7 @@ const FAQ = () => {
                 const firstId = getFirstIdForCategory(category);
                 if (firstId) setExpandedId(firstId);
               }}
-              className="px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold text-sm md:text-base border-2 border-blue-600 text-blue-600 transition-all duration-300 capitalize"
+              className="px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold text-sm md:text-base border-2 border-[#0B1F3A] text-[#0B1F3A] transition-all duration-300 capitalize"
             >
               {category === "all" ? "All Questions" : category}
             </motion.button>
@@ -225,8 +225,8 @@ const FAQ = () => {
                     <motion.h3
                       className="text-lg md:text-xl font-semibold text-slate-900 text-left"
                       animate={{
-                        color:
-                          validExpandedId === item.id ? "#3b82f6" : "#1e293b",
+                          color:
+                          validExpandedId === item.id ? "#F5A623" : "#1e293b",
                       }}
                       transition={{ duration: 0.3 }}
                     >
@@ -238,14 +238,14 @@ const FAQ = () => {
                         width: validExpandedId === item.id ? "100%" : 0,
                       }}
                       transition={{ duration: 0.4 }}
-                      className="h-1 bg-linear-to-r from-blue-500 to-cyan-500 rounded-full mt-2"
+                      className="h-1 bg-gradient-to-r from-[#0B1F3A] to-[#F5A623] rounded-full mt-2"
                     />
                   </div>
 
                   <motion.div
                     animate={{ rotate: validExpandedId === item.id ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
-                    className="shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 text-blue-600"
+                    className="shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-[#F5A623]/15 text-[#0B1F3A]"
                   >
                     <FaChevronDown className="w-5 h-5" />
                   </motion.div>
@@ -267,7 +267,7 @@ const FAQ = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ delay: 0.1, duration: 0.3 }}
-                      className="px-6 md:px-8 py-6 md:py-8 bg-linear-to-br from-blue-50 to-cyan-50 border-l-4 border-blue-500 rounded-b-xl"
+                      className="px-6 md:px-8 py-6 md:py-8 bg-gradient-to-br from-[#0B1F3A]/5 to-[#F5A623]/5 border-l-4 border-[#F5A623] rounded-b-xl"
                     >
                       <p className="text-gray-700 leading-relaxed text-sm md:text-base">
                         {item.answer}
@@ -286,22 +286,24 @@ const FAQ = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
-          className="mt-16 md:mt-20 text-center bg-linear-to-r from-blue-600 to-cyan-600 rounded-2xl p-8 md:p-12"
+          className="mt-16 md:mt-20 text-center bg-gradient-to-br from-[#0B1F3A] via-[#1A3A5C] to-[#0D3060] rounded-2xl p-8 md:p-12 relative overflow-hidden"
         >
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+          {/* subtle glow */}
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[#F5A623]/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+          <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 relative z-10">
             Still Have Questions?
           </h3>
-          <p className="text-blue-100 text-lg mb-6 max-w-xl mx-auto">
+          <p className="text-blue-200 text-lg mb-6 max-w-xl mx-auto relative z-10">
             Can't find the answer you're looking for? Our customer support team
             is here to help.
           </p>
           <motion.button
             whileHover={{
               scale: 1.05,
-              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.3)",
+              boxShadow: "0 20px 25px -5px rgba(245,166,35,0.3)",
             }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 md:px-12 py-3 md:py-4 bg-white text-blue-600 font-semibold rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300"
+            className="px-8 md:px-12 py-3 md:py-4 bg-[#F5A623] text-[#0B1F3A] font-bold rounded-xl shadow-lg hover:bg-[#e09518] transition-all duration-300 relative z-10"
           >
             Contact Support
           </motion.button>

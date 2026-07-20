@@ -1,5 +1,13 @@
 import { type FormEvent, useState } from "react";
-import { FaSpinner, FaImage } from "react-icons/fa";
+import {
+  FaSpinner,
+  FaImage,
+  FaCheckCircle,
+  FaTshirt,
+  FaDollarSign,
+  FaBoxOpen,
+  FaTags,
+} from "react-icons/fa";
 import { ProductAPI } from "../../api/product.api";
 
 interface ProductFormData {
@@ -11,7 +19,7 @@ interface ProductFormData {
   price: string;
   stock: string;
   sizes: string[];
-  imageUrl: string ;
+  imageUrl: string;
 }
 
 interface ProductFormErrors {
@@ -47,6 +55,19 @@ const initialFormData: ProductFormData = {
   imageUrl: "",
 };
 
+const FieldLabel = ({ children }: { children: React.ReactNode }) => (
+  <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-500">
+    {children}
+  </span>
+);
+
+const ErrorMsg = ({ msg }: { msg?: string }) =>
+  msg ? <p className="mt-1 text-xs font-medium text-red-500">{msg}</p> : null;
+
+const inputBase =
+  "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#F5A623] focus:bg-white focus:ring-1 focus:ring-[#F5A623]";
+const inputError = "border-red-400 bg-red-50 focus:border-red-500 focus:ring-red-200";
+
 const AddProduct = () => {
   const [formData, setFormData] = useState<ProductFormData>(initialFormData);
   const [errors, setErrors] = useState<ProductFormErrors>({});
@@ -55,9 +76,7 @@ const AddProduct = () => {
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -65,359 +84,299 @@ const AddProduct = () => {
   };
 
   const toggleSize = (size: string) => {
-    setFormData((prev) => {
-      const alreadySelected = prev.sizes.includes(size);
-      return {
-        ...prev,
-        sizes: alreadySelected
-          ? prev.sizes.filter((s) => s !== size)
-          : [...prev.sizes, size],
-      };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.includes(size)
+        ? prev.sizes.filter((s) => s !== size)
+        : [...prev.sizes, size],
+    }));
     setErrors((prev) => ({ ...prev, sizes: undefined }));
   };
 
   const validate = () => {
-    const nextErrors: ProductFormErrors = {};
-
-    if (!formData.title.trim()) {
-      nextErrors.title = "Title is required.";
-    } else if (formData.title.trim().length < 3) {
-      nextErrors.title = "Title must be at least 3 characters.";
-    }
-
-    if (!formData.team.trim()) {
-      nextErrors.team = "Team / country is required.";
-    }
-
-    if (!formData.category) {
-      nextErrors.category = "Please select a category.";
-    }
-
-    if (!formData.shortDescription.trim()) {
-      nextErrors.shortDescription = "Short description is required.";
-    } else if (formData.shortDescription.trim().length > 120) {
-      nextErrors.shortDescription = "Keep it under 120 characters.";
-    }
-
-    if (!formData.fullDescription.trim()) {
-      nextErrors.fullDescription = "Full description is required.";
-    } else if (formData.fullDescription.trim().length < 20) {
-      nextErrors.fullDescription = "Please write at least 20 characters.";
-    }
-
-    if (!formData.price) {
-      nextErrors.price = "Price is required.";
-    } else if (
-      Number.isNaN(Number(formData.price)) ||
-      Number(formData.price) <= 0
-    ) {
-      nextErrors.price = "Enter a valid price greater than 0.";
-    }
-
-    if (!formData.stock) {
-      nextErrors.stock = "Stock quantity is required.";
-    } else if (
-      Number.isNaN(Number(formData.stock)) ||
-      Number(formData.stock) < 0
-    ) {
-      nextErrors.stock = "Enter a valid stock quantity.";
-    }
-
-    if (formData.sizes.length === 0) {
-      nextErrors.sizes = "Select at least one available size.";
-    }
-
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+    const e: ProductFormErrors = {};
+    if (!formData.title.trim()) e.title = "Title is required.";
+    else if (formData.title.trim().length < 3) e.title = "At least 3 characters.";
+    if (!formData.team.trim()) e.team = "Team / country is required.";
+    if (!formData.category) e.category = "Please select a category.";
+    if (!formData.shortDescription.trim()) e.shortDescription = "Short description is required.";
+    else if (formData.shortDescription.trim().length > 120) e.shortDescription = "Max 120 characters.";
+    if (!formData.fullDescription.trim()) e.fullDescription = "Full description is required.";
+    else if (formData.fullDescription.trim().length < 20) e.fullDescription = "At least 20 characters.";
+    if (!formData.price) e.price = "Price is required.";
+    else if (isNaN(Number(formData.price)) || Number(formData.price) <= 0) e.price = "Enter a valid price.";
+    if (!formData.stock) e.stock = "Stock quantity is required.";
+    else if (isNaN(Number(formData.stock)) || Number(formData.stock) < 0) e.stock = "Enter a valid stock number.";
+    if (formData.sizes.length === 0) e.sizes = "Select at least one size.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
- const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-   event.preventDefault();
-
-   setServerError("");
-   setSuccessMessage("");
-
-   if (!validate()) return;
-
-   setIsSubmitting(true);
-
-   try {
-     await ProductAPI.create({
-       title: formData.title.trim(),
-       team: formData.team.trim(),
-       category: formData.category,
-       shortDescription: formData.shortDescription.trim(),
-       fullDescription: formData.fullDescription.trim(),
-       price: Number(formData.price),
-       stock: Number(formData.stock),
-       sizes: formData.sizes,
-       imageUrl: formData.imageUrl.trim() !== ""? formData.imageUrl.trim() :  undefined,
-     });
-
-     setSuccessMessage("Jersey added successfully!");
-     setFormData(initialFormData);
-   } catch (error) {
-     setServerError(
-       error instanceof Error
-         ? error.message
-         : "Something went wrong. Please try again.",
-     );
-   } finally {
-     setIsSubmitting(false);
-   }
- };
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setServerError("");
+    setSuccessMessage("");
+    if (!validate()) return;
+    setIsSubmitting(true);
+    try {
+      await ProductAPI.create({
+        title: formData.title.trim(),
+        team: formData.team.trim(),
+        category: formData.category,
+        shortDescription: formData.shortDescription.trim(),
+        fullDescription: formData.fullDescription.trim(),
+        price: Number(formData.price),
+        stock: Number(formData.stock),
+        sizes: formData.sizes,
+        imageUrl: formData.imageUrl.trim() || undefined,
+      });
+      setSuccessMessage("Jersey added to the store successfully!");
+      setFormData(initialFormData);
+    } catch (error) {
+      setServerError(
+        error instanceof Error ? error.message : "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+    <div className="p-6">
+      {/* Page Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Add New Jersey</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Fill in the details below to list a new jersey in the store.
-        </p>
+        <h2 className="text-2xl font-bold text-[#0B1F3A] md:text-3xl">Add New Jersey</h2>
+        <p className="mt-1 text-slate-500">Fill in the details below to list a new jersey in the store.</p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
-      >
-        {/* Title */}
-        <label className="form-control w-full">
-          <span className="label-text mb-2 font-medium text-slate-700">
-            Title
-          </span>
-          <input
-            name="title"
-            type="text"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="e.g. Argentina Home Jersey 2026"
-            className={`input input-bordered w-full ${errors.title ? "input-error" : ""}`}
-          />
-          {errors.title && (
-            <span className="mt-1 text-xs text-error">{errors.title}</span>
-          )}
-        </label>
+      <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-3">
+        {/* Left: main fields */}
+        <div className="space-y-5 lg:col-span-2">
+          {/* Basic Info Card */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <h3 className="mb-5 flex items-center gap-2 text-sm font-bold text-[#0B1F3A]">
+              <FaTshirt className="text-[#F5A623]" /> Basic Information
+            </h3>
+            <div className="space-y-5">
+              <div>
+                <FieldLabel>Jersey Title *</FieldLabel>
+                <input
+                  name="title"
+                  type="text"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="e.g. Argentina Home Jersey 2026"
+                  className={`${inputBase} ${errors.title ? inputError : ""}`}
+                />
+                <ErrorMsg msg={errors.title} />
+              </div>
 
-        {/* Team + Category */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <label className="form-control w-full">
-            <span className="label-text mb-2 font-medium text-slate-700">
-              Team / Country
-            </span>
-            <input
-              name="team"
-              type="text"
-              value={formData.team}
-              onChange={handleChange}
-              placeholder="e.g. Argentina"
-              className={`input input-bordered w-full ${errors.team ? "input-error" : ""}`}
-            />
-            {errors.team && (
-              <span className="mt-1 text-xs text-error">{errors.team}</span>
-            )}
-          </label>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <FieldLabel>Team / Country *</FieldLabel>
+                  <input
+                    name="team"
+                    type="text"
+                    value={formData.team}
+                    onChange={handleChange}
+                    placeholder="e.g. Argentina"
+                    className={`${inputBase} ${errors.team ? inputError : ""}`}
+                  />
+                  <ErrorMsg msg={errors.team} />
+                </div>
+                <div>
+                  <FieldLabel>Category *</FieldLabel>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className={`${inputBase} ${errors.category ? inputError : ""}`}
+                  >
+                    <option value="">Select category</option>
+                    {CATEGORIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <ErrorMsg msg={errors.category} />
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <label className="form-control w-full">
-            <span className="label-text mb-2 font-medium text-slate-700">
-              Category
-            </span>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className={`select select-bordered w-full ${errors.category ? "select-error" : ""}`}
-            >
-              <option value="">Select category</option>
-              {CATEGORIES.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-            {errors.category && (
-              <span className="mt-1 text-xs text-error">{errors.category}</span>
-            )}
-          </label>
+          {/* Descriptions Card */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <h3 className="mb-5 flex items-center gap-2 text-sm font-bold text-[#0B1F3A]">
+              <FaTags className="text-[#F5A623]" /> Descriptions
+            </h3>
+            <div className="space-y-5">
+              <div>
+                <FieldLabel>Short Description * <span className="ml-1 font-normal normal-case text-slate-400">(shown on product card)</span></FieldLabel>
+                <input
+                  name="shortDescription"
+                  type="text"
+                  value={formData.shortDescription}
+                  onChange={handleChange}
+                  placeholder="One-line summary..."
+                  maxLength={120}
+                  className={`${inputBase} ${errors.shortDescription ? inputError : ""}`}
+                />
+                <div className="mt-1 flex items-center justify-between">
+                  <ErrorMsg msg={errors.shortDescription} />
+                  <span className={`ml-auto text-xs ${formData.shortDescription.length > 100 ? "text-amber-500" : "text-slate-400"}`}>
+                    {formData.shortDescription.length}/120
+                  </span>
+                </div>
+              </div>
+              <div>
+                <FieldLabel>Full Description *</FieldLabel>
+                <textarea
+                  name="fullDescription"
+                  value={formData.fullDescription}
+                  onChange={handleChange}
+                  placeholder="Material, fit, sponsor details, wash instructions…"
+                  rows={5}
+                  className={`${inputBase} resize-none leading-relaxed ${errors.fullDescription ? inputError : ""}`}
+                />
+                <ErrorMsg msg={errors.fullDescription} />
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing & Stock */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <h3 className="mb-5 flex items-center gap-2 text-sm font-bold text-[#0B1F3A]">
+              <FaDollarSign className="text-[#F5A623]" /> Pricing & Stock
+            </h3>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <FieldLabel>Price (USD) *</FieldLabel>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
+                  <input
+                    name="price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={handleChange}
+                    placeholder="79.99"
+                    className={`${inputBase} pl-8 ${errors.price ? inputError : ""}`}
+                  />
+                </div>
+                <ErrorMsg msg={errors.price} />
+              </div>
+              <div>
+                <FieldLabel>Stock Quantity *</FieldLabel>
+                <div className="relative">
+                  <FaBoxOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
+                  <input
+                    name="stock"
+                    type="number"
+                    min="0"
+                    value={formData.stock}
+                    onChange={handleChange}
+                    placeholder="50"
+                    className={`${inputBase} pl-10 ${errors.stock ? inputError : ""}`}
+                  />
+                </div>
+                <ErrorMsg msg={errors.stock} />
+              </div>
+            </div>
+
+            {/* Sizes */}
+            <div className="mt-5">
+              <FieldLabel>Available Sizes *</FieldLabel>
+              <div className="flex flex-wrap gap-2">
+                {AVAILABLE_SIZES.map((size) => {
+                  const selected = formData.sizes.includes(size);
+                  return (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => toggleSize(size)}
+                      className={`h-10 w-14 rounded-xl border text-sm font-bold transition-all ${
+                        selected
+                          ? "border-[#0B1F3A] bg-[#0B1F3A] text-white shadow-md"
+                          : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-400"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
+              </div>
+              <ErrorMsg msg={errors.sizes} />
+            </div>
+          </div>
         </div>
 
-        {/* Short description */}
-        <label className="form-control w-full">
-          <span className="label-text mb-2 font-medium text-slate-700">
-            Short Description
-          </span>
-          <input
-            name="shortDescription"
-            type="text"
-            value={formData.shortDescription}
-            onChange={handleChange}
-            placeholder="One-line summary shown on the product card"
-            maxLength={120}
-            className={`input input-bordered w-full ${errors.shortDescription ? "input-error" : ""}`}
-          />
-          <div className="mt-1 flex items-center justify-between">
-            {errors.shortDescription ? (
-              <span className="text-xs text-error">
-                {errors.shortDescription}
-              </span>
-            ) : (
-              <span />
-            )}
-            <span className="text-xs text-slate-400">
-              {formData.shortDescription.length}/120
-            </span>
+        {/* Right: image + submit */}
+        <div className="space-y-5">
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <h3 className="mb-5 flex items-center gap-2 text-sm font-bold text-[#0B1F3A]">
+              <FaImage className="text-[#F5A623]" /> Product Image
+            </h3>
+            <div>
+              <FieldLabel>Image URL <span className="font-normal normal-case text-slate-400">(optional)</span></FieldLabel>
+              <div className="relative">
+                <FaImage className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
+                <input
+                  name="imageUrl"
+                  type="url"
+                  value={formData.imageUrl}
+                  onChange={handleChange}
+                  placeholder="https://..."
+                  className={`${inputBase} pl-10`}
+                />
+              </div>
+
+              {/* Image Preview */}
+              <div className={`mt-4 overflow-hidden rounded-xl border border-slate-200 transition-all ${formData.imageUrl ? "h-52" : "h-28"}`}>
+                {formData.imageUrl ? (
+                  <img
+                    src={formData.imageUrl}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).src = ""; }}
+                  />
+                ) : (
+                  <div className="flex h-full flex-col items-center justify-center gap-2 bg-slate-50 text-slate-300">
+                    <FaImage className="text-3xl" />
+                    <span className="text-xs font-medium">Image preview here</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        </label>
 
-        {/* Full description */}
-        <label className="form-control w-full">
-          <span className="label-text mb-2 font-medium text-slate-700">
-            Full Description
-          </span>
-          <textarea
-            name="fullDescription"
-            value={formData.fullDescription}
-            onChange={handleChange}
-            placeholder="Material, fit, sponsor details, etc."
-            rows={5}
-            className={`textarea textarea-bordered w-full ${errors.fullDescription ? "textarea-error" : ""}`}
-          />
-          {errors.fullDescription && (
-            <span className="mt-1 text-xs text-error">
-              {errors.fullDescription}
-            </span>
-          )}
-        </label>
-
-        {/* Price + Stock */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <label className="form-control w-full">
-            <span className="label-text mb-2 font-medium text-slate-700">
-              Price (USD)
-            </span>
-            <input
-              name="price"
-              type="number"
-              min="0"
-              step="0.01"
-              value={formData.price}
-              onChange={handleChange}
-              placeholder="e.g. 79.99"
-              className={`input input-bordered w-full ${errors.price ? "input-error" : ""}`}
-            />
-            {errors.price && (
-              <span className="mt-1 text-xs text-error">{errors.price}</span>
-            )}
-          </label>
-
-          <label className="form-control w-full">
-            <span className="label-text mb-2 font-medium text-slate-700">
-              Stock Quantity
-            </span>
-            <input
-              name="stock"
-              type="number"
-              min="0"
-              value={formData.stock}
-              onChange={handleChange}
-              placeholder="e.g. 50"
-              className={`input input-bordered w-full ${errors.stock ? "input-error" : ""}`}
-            />
-            {errors.stock && (
-              <span className="mt-1 text-xs text-error">{errors.stock}</span>
-            )}
-          </label>
-        </div>
-
-        {/* Sizes */}
-        <div>
-          <span className="label-text mb-2 block font-medium text-slate-700">
-            Available Sizes
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {AVAILABLE_SIZES.map((size) => {
-              const isSelected = formData.sizes.includes(size);
-              return (
-                <button
-                  key={size}
-                  type="button"
-                  onClick={() => toggleSize(size)}
-                  className={`h-10 w-14 rounded-lg border text-sm font-semibold transition-colors ${
-                    isSelected
-                      ? "border-[#0B1F3A] bg-[#0B1F3A] text-white"
-                      : "border-slate-300 text-slate-600 hover:border-slate-400"
-                  }`}
-                >
-                  {size}
-                </button>
-              );
-            })}
-          </div>
-          {errors.sizes && (
-            <span className="mt-1 block text-xs text-error">
-              {errors.sizes}
-            </span>
-          )}
-        </div>
-
-        {/* Image URL (optional) */}
-        <label className="form-control w-full">
-          <span className="label-text mb-2 font-medium text-slate-700">
-            Image URL{" "}
-            <span className="font-normal text-slate-400">(optional)</span>
-          </span>
-          <div className="relative">
-            <FaImage className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              name="imageUrl"
-              type="url"
-              value={formData.imageUrl}
-              onChange={handleChange}
-              placeholder="https://example.com/jersey.jpg"
-              className="input input-bordered w-full pl-10"
-            />
-          </div>
-          {formData.imageUrl && (
-            <div className="mt-3 h-32 w-32 overflow-hidden rounded-lg border border-slate-200">
-              <img
-                src={formData.imageUrl}
-                alt="Preview"
-                className="h-full w-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
-              />
+          {/* Feedback */}
+          {serverError && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              {serverError}
             </div>
           )}
-        </label>
-
-        {/* Server feedback */}
-        {serverError && (
-          <div className="rounded-xl border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">
-            {serverError}
-          </div>
-        )}
-        {successMessage && (
-          <div className="rounded-xl border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-700">
-            {successMessage}
-          </div>
-        )}
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="btn btn-primary w-full rounded-full sm:w-auto sm:px-10"
-        >
-          {isSubmitting ? (
-            <>
-              <FaSpinner className="animate-spin" />
-              Adding...
-            </>
-          ) : (
-            "Add Product"
+          {successMessage && (
+            <div className="flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+              <FaCheckCircle className="mt-0.5 shrink-0 text-emerald-500" />
+              {successMessage}
+            </div>
           )}
-        </button>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-[#0B1F3A] to-[#1A3A5C] py-3 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg disabled:opacity-70"
+          >
+            {isSubmitting ? (
+              <>
+                <FaSpinner className="animate-spin" /> Adding Jersey...
+              </>
+            ) : (
+              "Add Jersey to Store"
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { FaCalendar, FaArrowRight } from "react-icons/fa";
+import { Link } from "react-router";
 
 interface BlogPost {
   id: number;
@@ -16,64 +17,64 @@ const Blogs = () => {
     {
       id: 1,
       title: "How to Authenticate Football Jerseys",
-      excerpt: "Learn the key indicators of genuine vs counterfeit jerseys.",
-      date: "Dec 15, 2024",
+      excerpt:
+        "Learn the key indicators of genuine vs counterfeit jerseys before you buy. Don't get fooled by fake kits.",
+      date: "Dec 15, 2025",
       category: "Guide",
-      image:
-        "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=500&h=300&fit=crop",
-      author: "John Doe",
+      image: "https://i.ibb.co.com/m5gXw8t1/ronldo.jpg",
+      author: "FanKit Team",
     },
     {
       id: 2,
-      title: "Limited Edition Messi Jersey Collection",
-      excerpt: "Exclusive preview of Messi's newest collection drop.",
-      date: "Dec 10, 2024",
+      title: "Limited Edition Player Collections 2026",
+      excerpt:
+        "An exclusive preview of the newest player edition jerseys for the 2026 season. Get yours before they sell out.",
+      date: "Dec 10, 2025",
       category: "News",
-      image:
-        "https://images.unsplash.com/photo-1599812675935-79ffe315eed0?w=500&h=300&fit=crop",
-      author: "Sarah Smith",
+      image: "https://i.ibb.co.com/S744xhp9/images-q-tbn-ANd9-Gc-Q1-1c-Gal-O-2-NS-ez-l-Ql-S2hy-NNfju740-YOYz0-Gd-Izt-Rp-BQwij-Z0c7-Sgd3-s-10.jpg",
+      author: "FanKit Team",
     },
     {
       id: 3,
-      title: "Behind the Design: Jersey Production",
-      excerpt: "Meet the designers who create your favorite jerseys.",
-      date: "Dec 5, 2024",
+      title: "Mbappe's Paris Legacy — The Best Kits",
+      excerpt:
+        "A look at the most iconic Mbappe kits and what made each design stand out on the pitch.",
+      date: "Dec 5, 2025",
       category: "Interview",
-      image:
-        "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&h=300&fit=crop",
-      author: "Mike Johnson",
+      image: "https://i.ibb.co.com/YSJPbYS/mbb.jpg",
+      author: "FanKit Team",
     },
     {
       id: 4,
-      title: "Sustainable Jersey Manufacturing",
-      excerpt: "How brands are making eco-friendly football jerseys.",
-      date: "Nov 30, 2024",
-      category: "Sustainability",
-      image:
-        "https://images.unsplash.com/photo-1490481651213-60a4c9d59f7d?w=500&h=300&fit=crop",
-      author: "Emma Davis",
+      title: "Lamine Yamal: Spain's Next Star Jersey",
+      excerpt:
+        "The rise of Spain's youngest superstar and how his jersey became the must-have kit of 2025.",
+      date: "Nov 30, 2025",
+      category: "News",
+      image: "https://i.ibb.co.com/vNbZmfH/ymll.webp",
+      author: "FanKit Team",
     },
     {
       id: 5,
-      title: "Collecting Vintage Football Jerseys",
-      excerpt: "A collector's guide to rare and valuable jerseys.",
-      date: "Nov 25, 2024",
+      title: "Vinicius Jr — The Art of the Brazil Kit",
+      excerpt:
+        "How Brazil's iconic yellow-green has evolved and why Vinicius wears it like no one else.",
+      date: "Nov 25, 2025",
       category: "Tips",
-      image:
-        "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop",
-      author: "Alex Turner",
+      image: "https://i.ibb.co.com/HDFNBBVT/vini.jpg",
+      author: "FanKit Team",
     },
   ];
 
-  // Duplicate the list so the CSS animation can loop seamlessly (0% -> -50%)
+  // Duplicate the list so the CSS animation can loop seamlessly
   const marqueeItems = [...blogPosts, ...blogPosts];
 
   const categoryColorMap: Record<string, string> = {
-    Guide: "from-blue-500 to-cyan-500",
-    News: "from-purple-500 to-pink-500",
-    Interview: "from-orange-500 to-red-500",
-    Sustainability: "from-green-500 to-teal-500",
-    Tips: "from-indigo-500 to-blue-500",
+    Guide: "from-[#0B1F3A] to-[#1A3A5C]",
+    News: "from-[#F5A623] to-[#e09518]",
+    Interview: "from-purple-600 to-indigo-600",
+    Sustainability: "from-emerald-600 to-teal-600",
+    Tips: "from-[#F5A623] to-[#0B1F3A]",
   };
 
   return (
@@ -82,7 +83,7 @@ const Blogs = () => {
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
       viewport={{ once: true, amount: 0.3 }}
-      className="relative py-16 md:py-24 bg-linear-to-b from-white to-slate-50 overflow-hidden"
+      className="relative py-16 md:py-24 bg-gradient-to-b from-white to-slate-50 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -101,7 +102,7 @@ const Blogs = () => {
             viewport={{ once: true }}
           >
             Jersey{" "}
-            <span className="bg-linear-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#0B1F3A] to-[#F5A623] bg-clip-text text-transparent">
               Insights
             </span>
           </motion.h2>
@@ -116,21 +117,10 @@ const Blogs = () => {
           </motion.p>
         </motion.div>
 
-        {/*
-          Marquee Blog Cards — plain CSS marquee (right to left).
-
-          `react-fast-marquee` throws "Element type is invalid: expected a
-          string ... but got: object" on Vite/Next/Remix/Astro due to an
-          unresolved CJS/ESM export bug in the package itself (see
-          github.com/justin-chu/react-fast-marquee issues #85, #100, #140).
-          This replaces it with a duplicated list + CSS keyframe animation —
-          same seamless infinite-scroll effect, pause-on-hover included,
-          no extra dependency.
-        */}
+        {/* Marquee Blog Cards */}
         <div className="mb-12 md:mb-16 overflow-hidden relative group/marquee">
-          {/* Left/right fade edges, same effect as the old `gradient` prop */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24 bg-linear-to-r from-slate-50 to-transparent z-10" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24 bg-linear-to-l from-slate-50 to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24 bg-gradient-to-r from-slate-50 to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24 bg-gradient-to-l from-slate-50 to-transparent z-10" />
 
           <div className="flex w-max animate-marquee group-hover/marquee:[animation-play-state:paused] py-4">
             {marqueeItems.map((post, index) => (
@@ -138,31 +128,31 @@ const Blogs = () => {
                 key={`${post.id}-${index}`}
                 whileHover={{
                   y: -10,
-                  boxShadow: "0 20px 40px rgba(59, 130, 246, 0.2)",
+                  boxShadow: "0 20px 40px rgba(11, 31, 58, 0.15)",
                 }}
                 transition={{ duration: 0.3 }}
                 className="group mx-4 shrink-0 w-80"
               >
-                <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-5 border border-slate-100 group-hover:border-blue-200 flex flex-col h-full">
+                <div className="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-5 border border-slate-100 group-hover:border-[#F5A623]/30 flex flex-col h-full">
                   {/* Image Container */}
                   <div className="relative h-48 overflow-hidden rounded-lg mb-4">
                     <img
                       src={post.image}
                       alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-300"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                     {/* Category Badge */}
                     <div
-                      className={`absolute top-3 left-3 px-3 py-1 rounded-full text-white text-xs font-semibold bg-linear-to-r ${categoryColorMap[post.category]} shadow-lg`}
+                      className={`absolute top-3 left-3 px-3 py-1 rounded-full text-white text-xs font-semibold bg-gradient-to-r ${categoryColorMap[post.category]} shadow-lg`}
                     >
                       {post.category}
                     </div>
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+                  <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-[#F5A623] transition-colors duration-300">
                     {post.title}
                   </h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 grow">
@@ -172,7 +162,7 @@ const Blogs = () => {
                   {/* Meta Info */}
                   <div className="flex items-center justify-between text-xs text-gray-500 border-t border-slate-200 pt-4">
                     <div className="flex items-center gap-1">
-                      <FaCalendar className="w-3 h-3" />
+                      <FaCalendar className="w-3 h-3 text-[#F5A623]" />
                       <span>{post.date}</span>
                     </div>
                     <span className="font-semibold text-slate-700">
@@ -181,13 +171,13 @@ const Blogs = () => {
                   </div>
 
                   {/* Read More Link */}
-                  <a
-                    href="#"
-                    className="hidden group-hover:flex items-center gap-2 text-blue-600 font-semibold text-sm mt-4 hover:translate-x-1 transition-transform duration-200"
+                  <Link
+                    to={`/blog/${post.id}`}
+                    className="hidden group-hover:flex items-center gap-2 text-[#0B1F3A] hover:text-[#F5A623] font-semibold text-sm mt-4 hover:translate-x-1 transition-transform duration-200"
                   >
                     Read More
                     <FaArrowRight className="w-3 h-3" />
-                  </a>
+                  </Link>
                 </div>
               </motion.div>
             ))}
@@ -202,16 +192,18 @@ const Blogs = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <motion.button
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 20px 25px -5px rgba(59, 130, 246, 0.3)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 md:px-12 py-3 md:py-4 bg-linear-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300"
-          >
-            Read All Articles
-          </motion.button>
+          <Link to="/blog">
+            <motion.button
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 20px 25px -5px rgba(11, 31, 58, 0.3)",
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 md:px-12 py-3 md:py-4 bg-gradient-to-r from-[#0B1F3A] to-[#1A3A5C] text-white font-semibold rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300"
+            >
+              Read All Articles
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
 
