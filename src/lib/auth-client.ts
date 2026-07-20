@@ -7,6 +7,9 @@ const baseURL =
 
 export const authClient = createAuthClient({
   baseURL,
+  fetchOptions: {
+    credentials: "include", // Required for cross-origin cookie sending in production
+  },
 });
 
 export const { signIn, signUp, useSession } = authClient;
