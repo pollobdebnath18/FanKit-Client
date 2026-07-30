@@ -1,75 +1,127 @@
-# React + TypeScript + Vite
+# FanKit Client ⚽🏏🧢
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for **FanKit** — an e-commerce platform for sports merchandise. Browse, search, and shop football jerseys, cricket jerseys, and accessories.
 
-Currently, two official plugins are available:
+**Wear Your Team. Live The Game.**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19, TypeScript 6, Vite 8
+- Tailwind CSS v4, DaisyUI 5
+- React Router 8
+- TanStack React Query 5
+- Better Auth (client)
+- Framer Motion 12
+- Recharts
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Public
+- **Home** — Hero banner, featured categories (Football / Cricket / Accessories), new arrivals, best sellers, popular teams, testimonials, newsletter
+- **Collections** — Filterable product grid with search, category, subcategory, team, sort, price range, pagination
+- **Product Details** — Image gallery, size selector, quantity, tabs, reviews
+- **About / Contact / Blog**
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Authenticated
+- Wishlist
+- Shopping Cart
+- Checkout
+- Order History & Tracking
+- Profile & Address Management
+- Product Reviews
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Admin (`/admin`)
+- Dashboard with analytics
+- Manage Products (CRUD)
+- Manage Orders
+- Manage Users
+- Analytics (revenue, traffic, category/brand charts)
+- Store Settings
 
+---
+
+## Pages
+
+| URL | Page |
+|---|---|
+| `/` | Homepage |
+| `/shop` | Shop landing |
+| `/collections` | All products (filtered) |
+| `/collections/football` | Football |
+| `/collections/cricket` | Cricket |
+| `/collections/accessories` | Accessories |
+| `/collections/new-arrivals` | New Arrivals |
+| `/collections/best-sellers` | Best Sellers |
+| `/collections/sale` | Sale items |
+| `/collections/:team` | Team collection |
+| `/products/:slug` | Product details |
+| `/about` | About |
+| `/contact` | Contact |
+| `/blog` | Blog |
+| `/signin` | Sign in |
+| `/signup` | Sign up |
+| `/profile` | My Profile |
+| `/profile/addresses` | My Addresses |
+| `/orders` | My Orders |
+| `/orders/:id` | Order Detail |
+| `/wishlist` | Wishlist |
+| `/cart` | Shopping Cart |
+| `/checkout` | Checkout |
+| `/admin/dashboard` | Admin Dashboard |
+| `/admin/products` | Manage Products |
+| `/admin/products/new` | Add Product |
+| `/admin/products/:id/edit` | Edit Product |
+| `/admin/orders` | Manage Orders |
+| `/admin/users` | Manage Users |
+| `/admin/analytics` | Analytics |
+| `/admin/settings` | Settings |
+
+---
+
+## Getting Started
+
+```bash
+npm install
+npm run dev        # http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```env
+VITE_AUTH_API_URL=http://localhost:8000
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Build
+
+```bash
+npm run build      # tsc -b && vite build
+npm run preview
+```
+
+---
+
+## Project Structure
 
 ```
+src/
+├── api/             # API client layer
+├── components/      # Shared & page components
+├── hooks/           # TanStack Query hooks
+├── layout/          # Main & Admin layouts
+├── lib/             # Better Auth client
+├── pages/           # All page components
+├── routes/          # Router + auth guards
+├── main.tsx         # Entry point
+└── index.css        # Tailwind
+```
+
+---
+
+## Related
+
+- **Server repo:** [FanKit-Server](https://github.com/your-org/fankit-server)
+- **Requirements:** See `REQUIREMENTS.md` at project root
