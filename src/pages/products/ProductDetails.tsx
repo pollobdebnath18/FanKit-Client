@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { useParams, Link } from "react-router";
+import { useMemo, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   FaStar,
   FaRegStar,
@@ -11,13 +12,26 @@ import {
   FaTimesCircle,
   FaTshirt,
   FaChevronRight,
+  FaHeart,
+  FaCheck,
+  FaSpinner,
+  FaExclamationCircle,
 } from "react-icons/fa";
 import { useProduct } from "../../hooks/useProduct";
+import { useAuthSession } from "../../hooks/useAuthSession";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { useWishlist } from "../../hooks/useWishlist";
+import { addCartItem } from "../../api/cart.api";
+import { toggleWishlistItem, type WishlistResponse } from "../../api/wishlist.api";
 
 type TabKey = "overview" | "specs" | "reviews" | "related";
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { data: session } = useAuthSession();
+  const { currentUser } = useCurrentUser();
   const { data: product, isLoading } = useProduct(id!);
 
   const [activeImage, setActiveImage] = useState(0);
@@ -25,6 +39,60 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [sizeError, setSizeError] = useState(false);
+  const [actionError, setActionError] = useState("");
+  const [added, setAdded] = useState(false);
+  const [isBuying, setIsBuying] = useState(false);
+
+  const isLoggedIn = !!session?.user || !!currentUser;
+  const { data: wishlistData } = useWishlist(isLoggedIn);
+  const wishlistIds = useMemo(
+    () => new Set((wishlistData?.wishlist?.products ?? []).map((p) => p._id)),
+    [wishlistData],
+  );
+  const isWishlisted = product ? wishlistIds.has(product._id) : false;
+
+  const toggleWishlistMutation = useMutation({
+    mutationFn: (productId: string) => {
+      const data = queryClient.getQueryData<WishlistResponse>(["wishlist"]);
+      const exists = (data?.wishlist?.products ?? []).some(
+        (p) => p._id === productId,
+      );
+      return toggleWishlistItem(productId, !exists);
+    },
+    onMutate: async (productId) => {
+      if (!product) return;
+      await queryClient.cancelQueries({ queryKey: ["wishlist"] });
+      const previous = queryClient.getQueryData<WishlistResponse>([
+        "wishlist",
+      ]);
+      queryClient.setQueryData<WishlistResponse>(["wishlist"], (old) => {
+        const current = old?.wishlist?.products ?? [];
+        const exists = current.some((p) => p._id === productId);
+        return {
+          success: true,
+          wishlist: {
+            _id: old?.wishlist?._id ?? "optimistic",
+            products: exists
+              ? current.filter((p) => p._id !== productId)
+              : [{ ...product }, ...current],
+          },
+        };
+      });
+      return { previous };
+    },
+    onError: (_err, _productId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["wishlist"], context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+    },
+  });
+
+  const addToCartMutation = useMutation({
+    mutationFn: addCartItem,
+  });
 
   // ---------- Loading state ----------
   if (isLoading) {
@@ -56,31 +124,34 @@ const ProductDetails = () => {
     return (
       <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-24 text-center">
         <FaTshirt className="mb-4 text-4xl text-slate-300" />
-        <h1 className="text-xl font-bold text-slate-900">Jersey not found</h1>
+        <h1 className="text-xl font-bold text-slate-900">Product not found</h1>
         <p className="mt-2 text-sm text-slate-500">
           This product may have been removed or the link is incorrect.
         </p>
         <Link
-          to="/jerseys"
+          to="/shop"
           className="mt-6 rounded-full bg-[#0B1F3A] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#132C52]"
         >
-          Browse Jerseys
+          Browse Shop
         </Link>
       </div>
     );
   }
 
-  // ---------- Derived data (permissive, since backend shape may evolve) ----------
-  const images = product.imageUrl ? [product.imageUrl] : [];
+  // ---------- Derived data ----------
+  const images =
+    product.images && product.images.length > 0
+      ? product.images
+      : product.imageUrl
+        ? [product.imageUrl]
+        : [];
 
- const hasDiscount =
-   product.discountPrice != null && product.discountPrice < product.price;
+  const hasDiscount =
+    product.comparePrice != null && product.comparePrice > product.price;
 
- const displayPrice = hasDiscount ? product.discountPrice : product.price;
-
- const discountPercent = hasDiscount
-   ? Math.round(100 - (product.discountPrice! / product.price) * 100)
-   : 0;
+  const discountPercent = hasDiscount
+    ? Math.round(100 - (product.price / product.comparePrice!) * 100)
+    : 0;
 
   const inStock = (product.stock ?? 0) > 0;
   const sizes: string[] = product.sizes ?? [];
@@ -96,18 +167,74 @@ const ProductDetails = () => {
 
   const relatedProducts = product.relatedProducts ?? [];
 
-  const handleAddToCart = () => {
+  const validateSelection = () => {
     if (sizes.length > 0 && !selectedSize) {
       setSizeError(true);
-      return;
+      return false;
     }
     setSizeError(false);
-    // TODO: wire to cart service, e.g. addToCart({ productId: product._id, size: selectedSize, quantity })
-    console.log("Add to cart:", {
-      productId: product._id,
-      size: selectedSize,
-      quantity,
-    });
+    return true;
+  };
+
+  const handleAddToCart = () => {
+    if (!validateSelection()) return;
+    if (!isLoggedIn) {
+      navigate("/signin");
+      return;
+    }
+    setActionError("");
+    addToCartMutation.mutate(
+      {
+        productId: product._id,
+        size: selectedSize ?? undefined,
+        quantity,
+      },
+      {
+        onSuccess: () => {
+          setAdded(true);
+          setTimeout(() => setAdded(false), 1600);
+        },
+        onError: (err) =>
+          setActionError(
+            err instanceof Error ? err.message : "Something went wrong",
+          ),
+      },
+    );
+  };
+
+  const handleBuyNow = () => {
+    if (!validateSelection()) return;
+    if (!isLoggedIn) {
+      navigate("/signin");
+      return;
+    }
+    setActionError("");
+    setIsBuying(true);
+    addToCartMutation.mutate(
+      {
+        productId: product._id,
+        size: selectedSize ?? undefined,
+        quantity,
+      },
+      {
+        onSuccess: () => navigate("/cart"),
+        onError: (err) => {
+          setIsBuying(false);
+          setActionError(
+            err instanceof Error ? err.message : "Something went wrong",
+          );
+        },
+      },
+    );
+  };
+
+  const handleWishlist = () => {
+    if (!isLoggedIn) {
+      navigate("/signin");
+      return;
+    }
+    setActionError("");
+    toggleWishlistMutation.mutate(product._id);
   };
 
   const tabs: { key: TabKey; label: string }[] = [
@@ -128,8 +255,8 @@ const ProductDetails = () => {
           Home
         </Link>
         <FaChevronRight className="text-[8px]" />
-        <Link to="/jerseys" className="hover:text-slate-700">
-          Jerseys
+        <Link to="/shop" className="hover:text-slate-700">
+          Shop
         </Link>
         {product.category && (
           <>
@@ -196,7 +323,7 @@ const ProductDetails = () => {
                 {product.category}
               </span>
             )}
-            {product.isFeatured && (
+            {product.featured && (
               <span className="rounded-full bg-[#E0A421]/15 px-3 py-1 text-xs font-semibold text-[#B07E19]">
                 Featured
               </span>
@@ -232,12 +359,12 @@ const ProductDetails = () => {
           {/* Price */}
           <div className="mt-4 flex items-center gap-3">
             <span className="text-3xl font-black text-slate-900">
-              ${displayPrice?.toFixed(2)}
+              ${product.price.toFixed(2)}
             </span>
             {hasDiscount && (
               <>
                 <span className="text-lg text-slate-400 line-through">
-                  ${product.price.toFixed(2)}
+                  ${product.comparePrice!.toFixed(2)}
                 </span>
                 <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-bold text-[#D6392E]">
                   -{discountPercent}%
@@ -252,8 +379,7 @@ const ProductDetails = () => {
               <>
                 <FaCheckCircle className="text-green-600" />
                 <span className="font-medium text-green-700">
-                  In Stock{" "}
-                  {product.stock <= 10 && `(only ${product.stock} left)`}
+                  In Stock {product.stock <= 10 && `(only ${product.stock} left)`}
                 </span>
               </>
             ) : (
@@ -303,19 +429,23 @@ const ProductDetails = () => {
             </div>
           )}
 
-          {product.allowCustomization && (
-            <p className="mt-3 text-xs text-slate-500">
-              ✓ Name & number customization available at checkout
-            </p>
-          )}
+          {product.status === "active" &&
+            product.tags?.includes("customization") && (
+              <p className="mt-3 text-xs text-slate-500">
+                ✓ Name & number customization available at checkout
+              </p>
+            )}
 
-          {/* Quantity + actions */}
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          {/* Quantity + wishlist */}
+          <div className="mt-6 flex items-center gap-3">
             <div className="flex items-center rounded-full border border-slate-300">
               <button
                 type="button"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="flex h-11 w-11 items-center justify-center text-slate-600 hover:text-slate-900"
+                onClick={() =>
+                  setQuantity((q) => Math.max(1, Math.min(product.stock ?? 1, q - 1)))
+                }
+                disabled={!inStock}
+                className="flex h-11 w-11 items-center justify-center text-slate-600 hover:text-slate-900 disabled:cursor-not-allowed disabled:text-slate-300"
                 aria-label="Decrease quantity"
               >
                 <FaMinus className="text-xs" />
@@ -325,8 +455,11 @@ const ProductDetails = () => {
               </span>
               <button
                 type="button"
-                onClick={() => setQuantity((q) => q + 1)}
-                className="flex h-11 w-11 items-center justify-center text-slate-600 hover:text-slate-900"
+                onClick={() =>
+                  setQuantity((q) => Math.min(product.stock ?? 1, q + 1))
+                }
+                disabled={!inStock}
+                className="flex h-11 w-11 items-center justify-center text-slate-600 hover:text-slate-900 disabled:cursor-not-allowed disabled:text-slate-300"
                 aria-label="Increase quantity"
               >
                 <FaPlus className="text-xs" />
@@ -335,21 +468,71 @@ const ProductDetails = () => {
 
             <button
               type="button"
-              onClick={handleAddToCart}
-              disabled={!inStock}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-[#0B1F3A] px-6 py-3 text-sm font-bold text-[#0B1F3A] transition-colors hover:bg-[#0B1F3A]/5 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+              onClick={handleWishlist}
+              disabled={toggleWishlistMutation.isPending}
+              aria-label={
+                isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+              }
+              className={`ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                isWishlisted
+                  ? "border-red-200 bg-red-50 text-red-500"
+                  : "border-slate-300 text-slate-400 hover:border-red-300 hover:text-red-500"
+              }`}
             >
-              <FaShoppingCart /> Add to Cart
+              {toggleWishlistMutation.isPending ? (
+                <FaSpinner className="h-4 w-4 animate-spin" />
+              ) : (
+                <FaHeart className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`} />
+              )}
+            </button>
+          </div>
+
+          {/* Action buttons */}
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={!inStock || addToCartMutation.isPending || isBuying}
+              className={`flex items-center justify-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 ${
+                added
+                  ? "border-emerald-500 bg-emerald-50 text-emerald-600"
+                  : "border-[#0B1F3A] text-[#0B1F3A] hover:bg-[#0B1F3A]/5"
+              }`}
+            >
+              {added ? (
+                <FaCheck />
+              ) : addToCartMutation.isPending ? (
+                <FaSpinner className="animate-spin" />
+              ) : (
+                <FaShoppingCart />
+              )}
+              {added
+                ? "Added to Cart"
+                : addToCartMutation.isPending
+                  ? "Adding..."
+                  : "Add to Cart"}
             </button>
 
             <button
               type="button"
-              disabled={!inStock}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#E0A421] px-6 py-3 text-sm font-bold text-[#0B1F3A] transition-colors hover:bg-[#F5C542] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+              onClick={handleBuyNow}
+              disabled={!inStock || addToCartMutation.isPending || isBuying}
+              className="flex items-center justify-center gap-2 rounded-full bg-[#E0A421] px-6 py-3 text-sm font-bold text-[#0B1F3A] transition-colors hover:bg-[#F5C542] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
             >
-              <FaBolt /> Buy Now
+              {isBuying ? (
+                <FaSpinner className="animate-spin" />
+              ) : (
+                <FaBolt />
+              )}
+              {isBuying ? "Processing..." : "Buy Now"}
             </button>
           </div>
+
+          {actionError && (
+            <p className="mt-3 flex items-center gap-1.5 text-sm font-medium text-red-600">
+              <FaExclamationCircle /> {actionError}
+            </p>
+          )}
         </div>
       </div>
 
@@ -398,7 +581,9 @@ const ProductDetails = () => {
                   ],
                   [
                     "Customization",
-                    product.allowCustomization ? "Available" : "Not available",
+                    product.tags?.includes("customization")
+                      ? "Available"
+                      : "Not available",
                   ],
                 ]
                   .filter(([, value]) => value)
@@ -463,7 +648,7 @@ const ProductDetails = () => {
               ) : (
                 <div className="rounded-xl border border-dashed border-slate-200 py-12 text-center">
                   <p className="text-sm text-slate-500">
-                    No reviews yet for this jersey.
+                    No reviews yet for this product.
                   </p>
                   <p className="mt-1 text-xs text-slate-400">
                     Be the first to share your experience.
@@ -488,7 +673,7 @@ const ProductDetails = () => {
                     }) => (
                       <Link
                         key={item._id}
-                        to={`/jerseys/${item._id}`}
+                        to={`/products/${item._id}`}
                         className="group overflow-hidden rounded-xl border border-slate-200 transition-shadow hover:shadow-lg"
                       >
                         <div className="aspect-square overflow-hidden bg-slate-50">
@@ -513,7 +698,7 @@ const ProductDetails = () => {
               ) : (
                 <div className="rounded-xl border border-dashed border-slate-200 py-12 text-center">
                   <p className="text-sm text-slate-500">
-                    No related jerseys to show right now.
+                    No related products to show right now.
                   </p>
                 </div>
               )}

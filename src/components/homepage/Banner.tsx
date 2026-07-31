@@ -110,7 +110,7 @@ const Banner = () => {
               </span>
             </div>
             <div className="flex items-center gap-4 md:gap-6">
-              <span className="text-sm font-semibold text-[#1D4ED8] md:text-base">
+              <span className="text-sm font-semibold text-[#1D4ED8] md:text-xl">
                 {slide.discount}
               </span>
               <Link

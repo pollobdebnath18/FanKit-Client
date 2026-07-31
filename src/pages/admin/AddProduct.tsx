@@ -13,6 +13,7 @@ import { ProductAPI } from "../../api/product.api";
 interface ProductFormData {
   title: string;
   team: string;
+  sport: string;
   category: string;
   shortDescription: string;
   fullDescription: string;
@@ -25,6 +26,7 @@ interface ProductFormData {
 interface ProductFormErrors {
   title?: string;
   team?: string;
+  sport?: string;
   category?: string;
   shortDescription?: string;
   fullDescription?: string;
@@ -33,19 +35,33 @@ interface ProductFormErrors {
   sizes?: string;
 }
 
-const CATEGORIES = [
-  "Home Kit",
-  "Away Kit",
-  "Third Kit",
-  "Goalkeeper Kit",
-  "Retro",
-  "Player Edition",
-];
+const SPORTS = ["football", "cricket", "accessories"];
+
+const CATEGORIES_BY_SPORT: Record<string, string[]> = {
+  football: [
+    "Club Jerseys",
+    "National Team Jerseys",
+    "Retro Jerseys",
+    "Training Kits",
+  ],
+  cricket: ["International Jerseys", "Franchise Jerseys", "Training Jerseys"],
+  accessories: [
+    "Caps",
+    "Scarves",
+    "Socks",
+    "Water Bottles",
+    "Gym Bags",
+    "Wristbands",
+    "Keychains",
+    "Stickers",
+  ],
+};
 const AVAILABLE_SIZES = ["S", "M", "L", "XL", "XXL"];
 
 const initialFormData: ProductFormData = {
   title: "",
   team: "",
+  sport: "",
   category: "",
   shortDescription: "",
   fullDescription: "",
@@ -93,11 +109,21 @@ const AddProduct = () => {
     setErrors((prev) => ({ ...prev, sizes: undefined }));
   };
 
+  const handleSportChange = (sport: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      sport,
+      category: "",
+    }));
+    setErrors((prev) => ({ ...prev, sport: undefined, category: undefined }));
+  };
+
   const validate = () => {
     const e: ProductFormErrors = {};
     if (!formData.title.trim()) e.title = "Title is required.";
     else if (formData.title.trim().length < 3) e.title = "At least 3 characters.";
     if (!formData.team.trim()) e.team = "Team / country is required.";
+    if (!formData.sport) e.sport = "Please select a sport.";
     if (!formData.category) e.category = "Please select a category.";
     if (!formData.shortDescription.trim()) e.shortDescription = "Short description is required.";
     else if (formData.shortDescription.trim().length > 120) e.shortDescription = "Max 120 characters.";
@@ -122,6 +148,7 @@ const AddProduct = () => {
       await ProductAPI.create({
         title: formData.title.trim(),
         team: formData.team.trim(),
+        sport: formData.sport,
         category: formData.category,
         shortDescription: formData.shortDescription.trim(),
         fullDescription: formData.fullDescription.trim(),
@@ -185,20 +212,41 @@ const AddProduct = () => {
                   <ErrorMsg msg={errors.team} />
                 </div>
                 <div>
-                  <FieldLabel>Category *</FieldLabel>
+                  <FieldLabel>Sport *</FieldLabel>
                   <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    className={`${inputBase} ${errors.category ? inputError : ""}`}
+                    name="sport"
+                    value={formData.sport}
+                    onChange={(e) => handleSportChange(e.target.value)}
+                    className={`${inputBase} ${errors.sport ? inputError : ""}`}
                   >
-                    <option value="">Select category</option>
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
+                    <option value="">Select sport</option>
+                    {SPORTS.map((s) => (
+                      <option key={s} value={s}>
+                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                      </option>
                     ))}
                   </select>
-                  <ErrorMsg msg={errors.category} />
+                  <ErrorMsg msg={errors.sport} />
                 </div>
+              </div>
+
+              <div>
+                <FieldLabel>Category *</FieldLabel>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  disabled={!formData.sport}
+                  className={`${inputBase} ${errors.category ? inputError : ""} disabled:cursor-not-allowed disabled:opacity-60`}
+                >
+                  <option value="">
+                    {formData.sport ? "Select category" : "Select a sport first"}
+                  </option>
+                  {(CATEGORIES_BY_SPORT[formData.sport] ?? []).map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                <ErrorMsg msg={errors.category} />
               </div>
             </div>
           </div>

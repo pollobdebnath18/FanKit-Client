@@ -212,19 +212,28 @@ const Navbar: FC = () => {
                   onMouseEnter={() => setOpenDropdown(item.label)}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  <button
-                    type="button"
-                    onClick={() => setOpenDropdown(open ? null : item.label)}
-                    className={`flex items-center gap-1.5 ${linkBase} ${linkInactive}`}
-                    aria-expanded={open}
-                  >
-                    {item.label}
-                    <FaChevronDown
-                      className={`text-xs transition-transform duration-200 ${
-                        open ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
+                  <div className="flex items-center gap-0.5">
+                    <Link
+                      to={item.href}
+                      onClick={() => setOpenDropdown(null)}
+                      className={`${linkBase} ${linkInactive}`}
+                    >
+                      {item.label}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setOpenDropdown(open ? null : item.label)}
+                      aria-label={`Open ${item.label} menu`}
+                      aria-expanded={open}
+                      className="flex items-center p-1.5 text-gray-500 transition hover:text-[#1D4ED8]"
+                    >
+                      <FaChevronDown
+                        className={`text-xs transition-transform duration-200 ${
+                          open ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                  </div>
 
                   <AnimatePresence>
                     {open && (
@@ -522,20 +531,33 @@ const Navbar: FC = () => {
                   const open = openDropdown === item.label;
                   return (
                     <div key={item.label} className="flex flex-col gap-1">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setOpenDropdown(open ? null : item.label)
-                        }
-                        className={`flex items-center justify-between px-4 py-2 font-semibold rounded-lg transition-all ${linkInactive}`}
-                      >
-                        {item.label}
-                        <FaChevronDown
-                          className={`text-xs transition-transform duration-200 ${
-                            open ? "rotate-180" : ""
-                          }`}
-                        />
-                      </button>
+                      <div className="flex items-center justify-between">
+                        <Link
+                          to={item.href}
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            setOpenDropdown(null);
+                          }}
+                          className={`flex-1 px-4 py-2 font-semibold rounded-lg transition-all ${linkInactive}`}
+                        >
+                          {item.label}
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOpenDropdown(open ? null : item.label)
+                          }
+                          aria-label={`Open ${item.label} menu`}
+                          aria-expanded={open}
+                          className="px-3 py-2 text-gray-500 transition"
+                        >
+                          <FaChevronDown
+                            className={`text-xs transition-transform duration-200 ${
+                              open ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                      </div>
                       {open && (
                         <div className="flex flex-col gap-1 pl-3">
                           {renderMobileMenu(item.menu)}

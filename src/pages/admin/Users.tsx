@@ -25,7 +25,7 @@ const fallbackUsers: User[] = [
   { _id: "usr-4", name: "Tanvir Ahmed", email: "tanvir@yahoo.com", role: "user", createdAt: "2026-07-05T19:44:00.000Z" },
 ];
 
-const BASE_URL = (import.meta as any).env?.VITE_AUTH_API_URL || "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_AUTH_API_URL || "http://localhost:8000";
 
 const Users = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -37,20 +37,29 @@ const Users = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchUsers = async () => {
-    setIsLoading(true);
     try {
       const res = await fetch(`${BASE_URL}/api/users`);
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
-      setUsers(data.users?.length ? data.users : fallbackUsers);
+      return data.users?.length ? (data.users as User[]) : fallbackUsers;
     } catch {
-      setUsers(fallbackUsers);
-    } finally {
-      setIsLoading(false);
+      return fallbackUsers;
     }
   };
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => {
+    let cancelled = false;
+    // setState runs after the fetch resolves, never synchronously in the effect.
+    void fetchUsers().then((data) => {
+      if (!cancelled) {
+        setUsers(data);
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleToggleRole = async (email: string, currentRole: "user" | "admin") => {
     const newRole = currentRole === "admin" ? "user" : "admin";
@@ -99,7 +108,13 @@ const Users = () => {
           </p>
         </div>
         <button
-          onClick={fetchUsers}
+          onClick={() => {
+            setIsLoading(true);
+            void fetchUsers().then((data) => {
+              setUsers(data);
+              setIsLoading(false);
+            });
+          }}
           className="self-start rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-[#0B1F3A] shadow-sm hover:bg-slate-50 transition"
         >
           🔄 Refresh

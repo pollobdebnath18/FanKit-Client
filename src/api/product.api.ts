@@ -18,25 +18,32 @@ export interface RelatedProduct {
 export interface Product {
   _id: string;
   title: string;
-  shortDescription: string;
-  fullDescription: string;
+  slug?: string;
+  sport?: string;
+  gender?: string;
+  category?: string;
+  type?: string | null;
   team: string;
-  category: string;
-  price: number;
-  discountPrice?: number | null;
-  stock: number;
-  sizes: string[];
-
-  // Single image
-  imageUrl?: string;
-
   brand?: string;
   season?: string;
+  shortDescription: string;
+  fullDescription: string;
+  price: number;
+  comparePrice?: number | null;
+  stock: number;
   sku?: string;
+  sizes?: string[];
+  colors?: string[];
+  images?: string[];
+  imageUrl?: string;
   tags?: string[];
-  allowCustomization?: boolean;
-  isFeatured?: boolean;
-  status?: "draft" | "published";
+  featured?: boolean;
+  newArrival?: boolean;
+  onSale?: boolean;
+  rating?: number;
+  reviewCount?: number;
+  salesCount?: number;
+  status?: "active" | "draft" | "archived";
 
   reviews?: Review[];
   relatedProducts?: RelatedProduct[];
@@ -47,24 +54,28 @@ export interface Product {
 
 export interface CreateProduct {
   title: string;
-  shortDescription: string;
-  fullDescription: string;
+  sport: string;
+  gender?: string | null;
+  category?: string;
+  type?: string | null;
   team: string;
-  category: string;
-  price: number;
-  stock: number;
-  sizes: string[];
-
-  imageUrl?: string;
-
-  discountPrice?: number | null;
   brand?: string;
   season?: string;
+  shortDescription: string;
+  fullDescription: string;
+  price: number;
+  comparePrice?: number | null;
+  stock: number;
   sku?: string;
+  sizes?: string[];
+  colors?: string[];
+  images?: string[];
+  imageUrl?: string;
   tags?: string[];
-  allowCustomization?: boolean;
-  isFeatured?: boolean;
-  status?: "draft" | "published";
+  featured?: boolean;
+  newArrival?: boolean;
+  onSale?: boolean;
+  status?: "active" | "draft" | "archived";
 }
 
 export const ProductAPI = {
