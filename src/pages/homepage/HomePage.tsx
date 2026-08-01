@@ -15,8 +15,8 @@ const HomePage = () => {
       <Banner />
 
       {/* Product Showcase */}
-      <PopularJerseys />
       <NewArrivals />
+      <PopularJerseys />
       <Service />
 
       {/* Social Proof & Trust */}
@@ -29,7 +29,6 @@ const HomePage = () => {
 
       {/* Conversions & Footer */}
       <Newsletter />
-      
     </div>
   );
 };
