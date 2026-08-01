@@ -212,7 +212,7 @@ const Navbar: FC = () => {
                   onMouseEnter={() => setOpenDropdown(item.label)}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center">
                     <Link
                       to={item.href}
                       onClick={() => setOpenDropdown(null)}
@@ -225,7 +225,7 @@ const Navbar: FC = () => {
                       onClick={() => setOpenDropdown(open ? null : item.label)}
                       aria-label={`Open ${item.label} menu`}
                       aria-expanded={open}
-                      className="flex items-center p-1.5 text-gray-500 transition hover:text-[#1D4ED8]"
+                      className="flex items-center p-1.5 -ml-1.5 xl:-ml-2 2xl:-ml-4 text-gray-500 transition hover:text-[#1D4ED8]"
                     >
                       <FaChevronDown
                         className={`text-xs transition-transform duration-200 ${
@@ -288,7 +288,7 @@ const Navbar: FC = () => {
               >
                 <FaShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute top-2 -right-3.5 w-5 h-5 bg-[#2563EB] text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute top-2 -right-3.5 w-5 h-5 bg-red-400 text-white/90 text-xs font-bold rounded-full flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
@@ -473,10 +473,7 @@ const Navbar: FC = () => {
               exit={{ opacity: 0, y: -10 }}
               className="hidden md:flex pb-4"
             >
-              <form
-                onSubmit={handleSearchSubmit}
-                className="relative flex-1"
-              >
+              <form onSubmit={handleSearchSubmit} className="relative flex-1">
                 <input
                   type="text"
                   placeholder="Search products, teams, categories..."
@@ -515,7 +512,7 @@ const Navbar: FC = () => {
                 </form>
 
                 {/* Nav links */}
-            {desktopNavItems.map((item) => {
+                {desktopNavItems.map((item) => {
                   if (item.type === "link") {
                     return (
                       <NavLink

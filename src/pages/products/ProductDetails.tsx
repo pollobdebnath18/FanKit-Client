@@ -272,12 +272,12 @@ const ProductDetails = () => {
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
         {/* ---------- Image gallery ---------- */}
         <div>
-          <div className="aspect-square w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+          <div className="group aspect-square w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
             {images.length > 0 ? (
               <img
                 src={images[activeImage]}
                 alt={product.title}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-slate-300">
@@ -293,7 +293,7 @@ const ProductDetails = () => {
                   key={img + index}
                   type="button"
                   onClick={() => setActiveImage(index)}
-                  className={`h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 transition-colors ${
+                  className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition-colors ${
                     activeImage === index
                       ? "border-[#E0A421]"
                       : "border-slate-200 hover:border-slate-300"
@@ -359,12 +359,12 @@ const ProductDetails = () => {
           {/* Price */}
           <div className="mt-4 flex items-center gap-3">
             <span className="text-3xl font-black text-slate-900">
-              ${product.price.toFixed(2)}
+              ৳{product.price.toLocaleString()}
             </span>
             {hasDiscount && (
               <>
-                <span className="text-lg text-slate-400 line-through">
-                  ${product.comparePrice!.toFixed(2)}
+                <span className="text-lg text-[#F5A623] line-through">
+                  ৳{product.comparePrice!.toLocaleString()}
                 </span>
                 <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-bold text-[#D6392E]">
                   -{discountPercent}%
@@ -546,7 +546,7 @@ const ProductDetails = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`whitespace-nowrap border-b-2 px-1 pb-3 text-sm font-semibold transition-colors ${
                 activeTab === tab.key
-                  ? "border-[#E0A421] text-[#0B1F3A]"
+                  ? "border-[#F5A623] text-[#0B1F3A]"
                   : "border-transparent text-slate-500 hover:text-slate-700"
               }`}
             >
@@ -571,13 +571,21 @@ const ProductDetails = () => {
               <dl className="divide-y divide-slate-100">
                 {[
                   ["Team / Country", product.team],
+                  ["Sport", product.sport],
                   ["Category", product.category],
+                  ["Gender", product.gender],
                   ["Brand", product.brand],
                   ["Season", product.season],
                   ["SKU", product.sku],
                   [
                     "Available Sizes",
                     sizes.length > 0 ? sizes.join(", ") : "One size",
+                  ],
+                  [
+                    "Colors",
+                    product.colors && product.colors.length > 0
+                      ? product.colors.join(", ")
+                      : null,
                   ],
                   [
                     "Customization",
@@ -688,7 +696,7 @@ const ProductDetails = () => {
                             {item.title}
                           </p>
                           <p className="mt-1 text-sm font-bold text-slate-900">
-                            ${item.price.toFixed(2)}
+                            ৳{item.price.toLocaleString()}
                           </p>
                         </div>
                       </Link>

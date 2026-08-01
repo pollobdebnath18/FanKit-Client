@@ -47,7 +47,12 @@ const Badge = memo(
 );
 Badge.displayName = "Badge";
 
-const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: JerseyCardProps) => {
+const JerseyCard = ({
+  product,
+  onQuickView,
+  layout = "grid",
+  index = 0,
+}: JerseyCardProps) => {
   const navigate = useNavigate();
   const { data: session } = useAuthSession();
   const { currentUser } = useCurrentUser();
@@ -60,12 +65,15 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
   const image = getProductImage(product);
   const price = product.price ?? 0;
   const comparePrice = product.comparePrice ?? null;
-  const onSale = product.onSale ?? (comparePrice != null && comparePrice > price);
+  const onSale =
+    product.onSale ?? (comparePrice != null && comparePrice > price);
   const featured = product.featured ?? false;
   const isNew = product.newArrival ?? false;
   const rating = product.rating ?? 0;
   const inStock = (product.stock ?? 0) > 0;
-  const url = product.slug ? `/products/${product.slug}` : `/products/${product._id}`;
+  const url = product.slug
+    ? `/products/${product.slug}`
+    : `/products/${product._id}`;
 
   const handleAddToCart = useCallback(
     async (e: React.MouseEvent) => {
@@ -128,7 +136,10 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
         transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.4) }}
         className="group flex gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:shadow-xl"
       >
-        <Link to={url} className="relative block h-36 w-32 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+        <Link
+          to={url}
+          className="relative block h-36 w-32 shrink-0 overflow-hidden rounded-xl bg-slate-100"
+        >
           <img
             src={image}
             alt={product.title}
@@ -144,7 +155,9 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase text-slate-400">{product.team}</p>
+              <p className="text-xs font-semibold uppercase text-slate-400">
+                {product.team}
+              </p>
               <Link
                 to={url}
                 className="line-clamp-1 font-bold text-slate-900 transition hover:text-blue-600"
@@ -156,7 +169,9 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
               onClick={handleWishlist}
               aria-label="Add to wishlist"
               className={`rounded-full p-2 transition ${
-                isWishlisted ? "text-red-500" : "text-slate-300 hover:text-red-500"
+                isWishlisted
+                  ? "text-red-500"
+                  : "text-slate-300 hover:text-red-500"
               }`}
             >
               <FaHeart className="h-4 w-4" />
@@ -167,13 +182,17 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
           </p>
           <div className="mt-1 flex items-center gap-1.5">
             <Stars rating={rating} />
-            <span className="text-xs text-slate-400">({product.reviewCount ?? 0})</span>
+            <span className="text-xs text-slate-400">
+              ({product.reviewCount ?? 0})
+            </span>
           </div>
           <div className="mt-auto flex items-center justify-between pt-3">
             <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-slate-900">${price}</span>
+              <span className="text-lg font-bold text-slate-900">৳{price}</span>
               {onSale && comparePrice && (
-                <span className="text-sm text-slate-400 line-through">${comparePrice}</span>
+                <span className="text-sm text-[#F5A623] line-through">
+                  ৳{comparePrice}
+                </span>
               )}
             </div>
             <button
@@ -185,7 +204,11 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
                   : "bg-blue-600 text-white hover:bg-blue-700"
               } disabled:cursor-not-allowed disabled:opacity-50`}
             >
-              {added ? <FaCheck className="h-3 w-3" /> : <FaShoppingBag className="h-3 w-3" />}
+              {added ? (
+                <FaCheck className="h-3 w-3" />
+              ) : (
+                <FaShoppingBag className="h-3 w-3" />
+              )}
               {adding ? "Adding..." : added ? "Added" : "Add to Cart"}
             </button>
           </div>
@@ -213,11 +236,20 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
           />
         </Link>
 
-        {featured && <Badge label="Featured" className="bg-gradient-to-r from-amber-400 to-orange-500" />}
+        {featured && (
+          <Badge
+            label="Featured"
+            className="bg-gradient-to-r from-amber-400 to-orange-500"
+          />
+        )}
         {isNew && !featured && <Badge label="New" className="bg-blue-600" />}
         {onSale && (
           <Badge
-            label={comparePrice ? `${Math.round(100 - (price / comparePrice) * 100)}% OFF` : "Sale"}
+            label={
+              comparePrice
+                ? `${Math.round(100 - (price / comparePrice) * 100)}% OFF`
+                : "Sale"
+            }
             className="left-auto right-3 bg-red-500"
           />
         )}
@@ -227,19 +259,32 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
           </span>
         )}
 
-        {/* Wishlist */}
-        <button
-          onClick={handleWishlist}
-          aria-label="Add to wishlist"
-          className={`absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white shadow transition ${
-            isWishlisted ? "text-red-500" : "text-slate-400 hover:text-red-500"
-          }`}
-        >
-          <FaHeart className={isWishlisted ? "h-4 w-4 fill-current" : "h-4 w-4"} />
-        </button>
+        {/* Wishlist & Quick view */}
+        <div className="absolute right-3 bottom-3 z-10 flex flex-col gap-2">
+          <button
+            onClick={handleWishlist}
+            aria-label="Add to wishlist"
+            className={`flex h-6 w-6 items-center justify-center rounded-full bg-white shadow transition ${
+              isWishlisted
+                ? "text-red-500"
+                : "text-slate-400 hover:text-red-500"
+            }`}
+          >
+            <FaHeart
+              className={isWishlisted ? "h-3.5 w-3.5 fill-current" : "h-3.5 w-3.5"}
+            />
+          </button>
+          <button
+            onClick={handleQuickView}
+            aria-label="Quick view"
+            className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-slate-600 shadow transition hover:text-blue-600"
+          >
+            <FaEye className="h-3.5 w-3.5" />
+          </button>
+        </div>
 
         {/* Hover actions */}
-        <div className="absolute inset-x-3 bottom-3 z-10 flex translate-y-16 gap-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="absolute bottom-3 left-3 right-14 z-10 flex translate-y-16 gap-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
           <button
             onClick={handleAddToCart}
             disabled={adding || !inStock}
@@ -247,15 +292,12 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
               added ? "bg-emerald-500" : "bg-blue-600 hover:bg-blue-700"
             } disabled:cursor-not-allowed disabled:opacity-60`}
           >
-            {added ? <FaCheck className="h-3 w-3" /> : <FaShoppingBag className="h-3 w-3" />}
+            {added ? (
+              <FaCheck className="h-3 w-3" />
+            ) : (
+              <FaShoppingBag className="h-3 w-3" />
+            )}
             {adding ? "Adding..." : added ? "Added" : "Add to Cart"}
-          </button>
-          <button
-            onClick={handleQuickView}
-            aria-label="Quick view"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-600 shadow-lg transition hover:text-blue-600"
-          >
-            <FaEye className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
@@ -268,7 +310,9 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
           </p>
           <div className="flex items-center gap-1">
             <Stars rating={rating} />
-            <span className="text-[10px] text-slate-400">({product.reviewCount ?? 0})</span>
+            <span className="text-[10px] text-slate-400">
+              ({product.reviewCount ?? 0})
+            </span>
           </div>
         </div>
 
@@ -279,11 +323,13 @@ const JerseyCard = ({ product, onQuickView, layout = "grid", index = 0 }: Jersey
           {product.title}
         </Link>
 
-        <div className="mt-auto flex items-end justify-between pt-3">
-          <div className="flex flex-col">
-            <span className="text-lg font-bold text-slate-900">${price}</span>
+        <div className="mt-1 flex items-end justify-between pt-2">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-lg font-bold text-slate-900">৳{price}</span>
             {onSale && comparePrice && (
-              <span className="text-xs text-slate-400 line-through">${comparePrice}</span>
+              <span className="text-xs text-[#F5A623] line-through">
+                ৳{comparePrice}
+              </span>
             )}
           </div>
           {product.category && (

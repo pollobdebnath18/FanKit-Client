@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaTimes, FaShoppingBag, FaHeart, FaStar, FaRegStar, FaCheck } from "react-icons/fa";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FaTimes, FaShoppingBag, FaHeart, FaStar, FaRegStar, FaCheck, FaSpinner } from "react-icons/fa";
 import type { Product } from "../../api/product.api";
 import { useAuthSession } from "../../hooks/useAuthSession";
+import { useWishlist } from "../../hooks/useWishlist";
 import { addCartItem } from "../../api/cart.api";
-import { toggleWishlistItem } from "../../api/wishlist.api";
+import { toggleWishlistItem, type WishlistResponse } from "../../api/wishlist.api";
 import { getProductImage } from "../../lib/productImage";
 
 interface QuickViewModalProps {
@@ -15,11 +17,52 @@ interface QuickViewModalProps {
 
 const QuickViewModal = ({ product, onClose }: QuickViewModalProps) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: session } = useAuthSession();
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const isLoggedIn = !!session?.user;
+  const { data: wishlistData } = useWishlist(isLoggedIn);
+  const wishlistIds = useMemo(
+    () => new Set((wishlistData?.wishlist?.products ?? []).map((p) => p._id)),
+    [wishlistData],
+  );
+  const isWishlisted = product ? wishlistIds.has(product._id) : false;
+
+  const toggleWishlistMutation = useMutation({
+    mutationFn: (productId: string) => {
+      return toggleWishlistItem(productId, !isWishlisted);
+    },
+    onMutate: async (productId) => {
+      if (!product) return;
+      await queryClient.cancelQueries({ queryKey: ["wishlist"] });
+      const previous = queryClient.getQueryData<WishlistResponse>(["wishlist"]);
+      queryClient.setQueryData<WishlistResponse>(["wishlist"], (old) => {
+        const current = old?.wishlist?.products ?? [];
+        const exists = current.some((p) => p._id === productId);
+        return {
+          success: true,
+          wishlist: {
+            _id: old?.wishlist?._id ?? "optimistic",
+            products: exists
+              ? current.filter((p) => p._id !== productId)
+              : [{ ...product }, ...current],
+          },
+        };
+      });
+      return { previous };
+    },
+    onError: (_err, _productId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["wishlist"], context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+    },
+  });
 
   // Reset transient state whenever a different product opens (render-time sync).
   const productId = product?._id ?? null;
@@ -42,7 +85,6 @@ const QuickViewModal = ({ product, onClose }: QuickViewModalProps) => {
     };
   }, [product, onClose]);
 
-  const isLoggedIn = !!session?.user;
   const price = product?.price ?? 0;
   const comparePrice = product?.comparePrice ?? null;
   const onSale = product?.onSale ?? (comparePrice != null && comparePrice > price);
@@ -71,17 +113,12 @@ const QuickViewModal = ({ product, onClose }: QuickViewModalProps) => {
     }
   };
 
-  const handleWishlist = async () => {
+  const handleWishlist = () => {
     if (!isLoggedIn) {
       navigate("/signin");
       return;
     }
-    setIsWishlisted((prev) => !prev);
-    try {
-      await toggleWishlistItem(product._id, !isWishlisted);
-    } catch {
-      setIsWishlisted((prev) => !prev);
-    }
+    toggleWishlistMutation.mutate(product._id);
   };
 
   return (
@@ -135,7 +172,7 @@ const QuickViewModal = ({ product, onClose }: QuickViewModalProps) => {
             {/* Details */}
             <div className="flex flex-col p-6 md:p-8">
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-blue-600">
+                <span className="rounded-full bg-[#0B1F3A]/10 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-[#0B1F3A]">
                   {product.category || product.sport}
                 </span>
                 <span className="text-xs font-semibold uppercase text-slate-400">
@@ -163,10 +200,10 @@ const QuickViewModal = ({ product, onClose }: QuickViewModalProps) => {
               </div>
 
               <div className="mt-4 flex items-baseline gap-3">
-                <span className="text-2xl font-bold text-slate-900">${price}</span>
+                <span className="text-2xl font-bold text-slate-900">৳{price.toLocaleString()}</span>
                 {onSale && comparePrice && (
-                  <span className="text-base text-slate-400 line-through">
-                    ${comparePrice}
+                  <span className="text-base text-[#F5A623] line-through">
+                    ৳{comparePrice.toLocaleString()}
                   </span>
                 )}
                 {onSale && comparePrice && (
@@ -192,8 +229,8 @@ const QuickViewModal = ({ product, onClose }: QuickViewModalProps) => {
                         onClick={() => setSelectedSize(size)}
                         className={`min-w-10 rounded-lg border px-3 py-1.5 text-sm font-semibold transition ${
                           selectedSize === size
-                            ? "border-blue-600 bg-blue-600 text-white"
-                            : "border-slate-300 text-slate-600 hover:border-blue-400"
+                            ? "border-[#0B1F3A] bg-[#0B1F3A] text-white"
+                            : "border-slate-300 text-slate-600 hover:border-slate-400"
                         }`}
                       >
                         {size}
@@ -208,7 +245,7 @@ const QuickViewModal = ({ product, onClose }: QuickViewModalProps) => {
                   onClick={handleAddToCart}
                   disabled={adding || !inStock}
                   className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-white shadow-lg transition ${
-                    added ? "bg-emerald-500" : "bg-blue-600 hover:bg-blue-700"
+                    added ? "bg-emerald-500" : "bg-[#0B1F3A] hover:bg-[#132C52]"
                   } disabled:cursor-not-allowed disabled:opacity-50`}
                 >
                   {added ? <FaCheck className="h-4 w-4" /> : <FaShoppingBag className="h-4 w-4" />}
@@ -216,21 +253,26 @@ const QuickViewModal = ({ product, onClose }: QuickViewModalProps) => {
                 </button>
                 <button
                   onClick={handleWishlist}
+                  disabled={toggleWishlistMutation.isPending}
                   aria-label="Add to wishlist"
-                  className={`flex h-11 w-11 items-center justify-center rounded-xl border transition ${
+                  className={`flex h-11 w-11 items-center justify-center rounded-xl border transition disabled:cursor-not-allowed disabled:opacity-60 ${
                     isWishlisted
                       ? "border-red-200 bg-red-50 text-red-500"
                       : "border-slate-200 text-slate-400 hover:text-red-500"
                   }`}
                 >
-                  <FaHeart className={isWishlisted ? "h-4 w-4 fill-current" : "h-4 w-4"} />
+                  {toggleWishlistMutation.isPending ? (
+                    <FaSpinner className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <FaHeart className={isWishlisted ? "h-4 w-4 fill-current" : "h-4 w-4"} />
+                  )}
                 </button>
               </div>
 
               <Link
                 to={url}
                 onClick={onClose}
-                className="mt-3 text-center text-sm font-semibold text-blue-600 hover:underline"
+                className="mt-3 text-center text-sm font-semibold text-[#0B1F3A] hover:underline"
               >
                 View Full Details →
               </Link>
