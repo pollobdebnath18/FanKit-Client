@@ -100,6 +100,7 @@ const JerseyCard = ({
           quantity: 1,
           size: product.sizes?.[0],
         });
+        queryClient.invalidateQueries({ queryKey: ["cart"] });
         setAdded(true);
         setTimeout(() => setAdded(false), 1500);
       } catch {
@@ -108,7 +109,7 @@ const JerseyCard = ({
         setAdding(false);
       }
     },
-    [isLoggedIn, navigate, product._id, product.sizes],
+    [isLoggedIn, navigate, product._id, product.sizes, queryClient],
   );
 
   const toggleWishlistMutation = useMutation({

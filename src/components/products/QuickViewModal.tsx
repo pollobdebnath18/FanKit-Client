@@ -104,6 +104,7 @@ const QuickViewModal = ({ product, onClose }: QuickViewModalProps) => {
     setAdding(true);
     try {
       await addCartItem({ productId: product._id, quantity: 1, size });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       setAdded(true);
       setTimeout(() => onClose(), 900);
     } catch {

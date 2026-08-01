@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FC } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,6 +14,7 @@ import {
 import logo from "../../assets/fankit-logo.svg";
 import { authClient } from "../../lib/auth-client";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { useCart } from "../../hooks/useCart";
 import {
   desktopNavItems,
   navItems,
@@ -30,12 +31,18 @@ const Navbar: FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [cartCount, setCartCount] = useState(0);
 
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { data: session, isPending } = authClient.useSession();
   const { currentUser } = useCurrentUser();
+
+  const isLoggedIn = !!session?.user || !!currentUser;
+  const { data: cartData } = useCart(isLoggedIn);
+  const cartCount = (cartData?.cart?.items ?? []).reduce(
+    (sum: number, item: { quantity?: number }) => sum + (item.quantity ?? 0),
+    0,
+  );
 
   const isAdmin = currentUser?.role === "admin";
 
@@ -47,37 +54,6 @@ const Navbar: FC = () => {
     setOpenDropdown(null);
     setIsMenuOpen(false);
   }
-
-  // Fetch live cart count when logged in
-  const userId = session?.user?.id;
-  const [prevUserId, setPrevUserId] = useState<string | undefined>(userId);
-  if (prevUserId !== userId) {
-    setPrevUserId(userId);
-    if (!userId) {
-      setCartCount(0);
-    }
-  }
-
-  useEffect(() => {
-    if (!userId) return;
-    const baseURL =
-      import.meta.env.VITE_AUTH_API_URL ||
-      import.meta.env.VITE_API_BASE_URL ||
-      "";
-    fetch(`${baseURL}/api/cart`, { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data) => {
-        const items = data?.cart?.items ?? [];
-        setCartCount(
-          items.reduce(
-            (sum: number, item: { quantity?: number }) =>
-              sum + (item.quantity ?? 0),
-            0,
-          ),
-        );
-      })
-      .catch(() => setCartCount(0));
-  }, [userId]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -288,7 +264,7 @@ const Navbar: FC = () => {
               >
                 <FaShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute top-2 -right-3.5 w-5 h-5 bg-red-400 text-white/90 text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute top-4 -right-5 w-5 h-5 bg-red-400 text-white/90 text-xs font-bold rounded-full flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
@@ -303,7 +279,7 @@ const Navbar: FC = () => {
             >
               {isPending ? (
                 <span className="loading loading-spinner loading-sm"></span>
-              ) : session?.user ? (
+              ) : (
                 <>
                   <button
                     type="button"
@@ -315,19 +291,14 @@ const Navbar: FC = () => {
                     className="flex items-center gap-1.5 p-1 text-gray-700 hover:text-[#1D4ED8] transition-colors"
                     aria-expanded={openDropdown === "Account"}
                   >
-                    <img
-                      src={
-                        session?.user?.image ||
-                        `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(session.user.name)}`
-                      }
-                      alt={session?.user?.name}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-[#2563EB]"
-                    />
-                    <FaChevronDown
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#2563EB] bg-[#2563EB]/10 text-[#2563EB]">
+                      <FaUser className="h-4 w-4" />
+                    </div>
+                    {/* <FaChevronDown
                       className={`text-xs transition-transform duration-200 ${
                         openDropdown === "Account" ? "rotate-180" : ""
                       }`}
-                    />
+                    /> */}
                   </button>
 
                   <AnimatePresence>
@@ -340,94 +311,109 @@ const Navbar: FC = () => {
                         className="absolute right-0 top-full z-50 pt-2"
                       >
                         <div className="w-52 rounded-xl border border-slate-100 bg-white p-2 shadow-xl">
-                          <div className="border-b border-slate-100 px-3 py-2">
-                            <p className="text-sm font-bold text-slate-900 truncate">
-                              {session.user.name}
-                            </p>
-                            <p className="text-xs text-gray-400 truncate">
-                              {session.user.email}
-                            </p>
-                          </div>
-                          <div className="pt-1 space-y-0.5">
-                            <Link
-                              to="/profile"
-                              className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
-                            >
-                              My Profile
-                            </Link>
-                            <Link
-                              to="/orders"
-                              className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
-                            >
-                              My Orders
-                            </Link>
-                            <Link
-                              to="/cart"
-                              className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
-                            >
-                              Cart
-                            </Link>
-                            <Link
-                              to="/wishlist"
-                              className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
-                            >
-                              Wishlist
-                            </Link>
-                            {isAdmin && (
-                              <Link
-                                to="/admin/dashboard"
-                                className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
-                              >
-                                Admin Dashboard
-                              </Link>
-                            )}
-                            <div className="my-1 border-t border-slate-100"></div>
-                            <Link
-                              to="/about"
-                              className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
-                            >
-                              About
-                            </Link>
-                            <Link
-                              to="/blog"
-                              className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
-                            >
-                              Blog
-                            </Link>
-                            <Link
-                              to="/contact"
-                              className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
-                            >
-                              Contact
-                            </Link>
-                            <button
-                              onClick={async () => {
-                                await authClient.signOut({
-                                  fetchOptions: {
-                                    onSuccess: () => {
-                                      window.location.href = "/";
-                                    },
-                                  },
-                                });
-                              }}
-                              className="w-full text-left rounded-lg px-3 py-2 text-sm font-semibold text-red-500 transition hover:bg-red-50"
-                            >
-                              Sign Out
-                            </button>
-                          </div>
+                          {session?.user ? (
+                            <>
+                              <div className="border-b border-slate-100 px-3 py-2">
+                                <p className="text-sm font-bold text-slate-900 truncate">
+                                  {session.user.name}
+                                </p>
+                                <p className="text-xs text-gray-400 truncate">
+                                  {session.user.email}
+                                </p>
+                              </div>
+                              <div className="pt-1 space-y-0.5">
+                                <Link
+                                  to="/profile"
+                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                >
+                                  My Profile
+                                </Link>
+                                <Link
+                                  to="/orders"
+                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                >
+                                  My Orders
+                                </Link>
+                                <Link
+                                  to="/cart"
+                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                >
+                                  Cart
+                                </Link>
+                                <Link
+                                  to="/wishlist"
+                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                >
+                                  Wishlist
+                                </Link>
+                                {isAdmin && (
+                                  <Link
+                                    to="/admin/dashboard"
+                                    className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                  >
+                                    Admin Dashboard
+                                  </Link>
+                                )}
+                                <div className="my-1 border-t border-slate-100"></div>
+                                <Link
+                                  to="/about"
+                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                >
+                                  About
+                                </Link>
+                                <Link
+                                  to="/blog"
+                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                >
+                                  Blog
+                                </Link>
+                                <Link
+                                  to="/contact"
+                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                >
+                                  Contact
+                                </Link>
+                                <button
+                                  onClick={async () => {
+                                    await authClient.signOut({
+                                      fetchOptions: {
+                                        onSuccess: () => {
+                                          window.location.href = "/";
+                                        },
+                                      },
+                                    });
+                                  }}
+                                  className="w-full text-left rounded-lg px-3 py-2 text-sm font-semibold text-red-500 transition hover:bg-red-50"
+                                >
+                                  Sign Out
+                                </button>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="py-1">
+                              <p className="px-3 py-2 text-sm font-bold text-yellow-400">
+                                Welcome to FanKit
+                              </p>
+                              <div className="space-y-0.5">
+                                <Link
+                                  to="/signin"
+                                  className="block rounded-lg px-3 py-2 text-sm font-semibold text-[#2563EB] transition hover:bg-[#2563EB]/10"
+                                >
+                                  Sign In
+                                </Link>
+                                <Link
+                                  to="/signup"
+                                  className="block rounded-lg px-3 py-2 text-sm font-semibold text-[#2563EB] transition hover:bg-[#2563EB]/10"
+                                >
+                                  Sign Up
+                                </Link>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/signin"
-                    className="px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition-all"
-                  >
-                    Sign In
-                  </Link>
                 </>
               )}
             </div>

@@ -88,6 +88,9 @@ const ProductDetails = () => {
 
   const addToCartMutation = useMutation({
     mutationFn: addCartItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
   });
 
   // ---------- Loading state ----------

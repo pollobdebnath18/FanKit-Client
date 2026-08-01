@@ -114,7 +114,6 @@ export const navItems: NavEntry[] = [
     menu: item.menu,
   })),
   { type: "link", label: "About", href: "/about" },
-  { type: "link", label: "Blog", href: "/blog" },
   { type: "link", label: "Contact", href: "/contact" },
 ];
 

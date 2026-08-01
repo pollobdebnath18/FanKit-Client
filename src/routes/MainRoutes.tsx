@@ -9,9 +9,9 @@ import Shop from "../pages/shop/Shop";
 import LazyShopCategory from "../pages/shop/LazyShopCategory";
 import About from "../pages/about/About";
 import Contact from "../pages/contact/Contact";
-import Blog from "../pages/blog/Blog";
 import Collections from "../pages/collections/Collections";
 import Wishlist from "../pages/wishlist/Wishlist";
+import Cart from "../pages/cart/Cart";
 
 export const MainRoutes = {
   path: "/",
@@ -29,7 +29,6 @@ export const MainRoutes = {
       path: "about",
       Component: About,
     },
-    { path: "blog", Component: Blog },
 
     {
       path: "shop",
@@ -65,6 +64,11 @@ export const MainRoutes = {
     {
       path: "wishlist",
       Component: Wishlist,
+    },
+
+    {
+      path: "cart",
+      Component: Cart,
     },
   ],
 };
