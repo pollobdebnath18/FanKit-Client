@@ -23,6 +23,7 @@ import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { useWishlist } from "../../hooks/useWishlist";
 import { addCartItem } from "../../api/cart.api";
 import { toggleWishlistItem, type WishlistResponse } from "../../api/wishlist.api";
+import { getProductImage } from "../../lib/productImage";
 
 type TabKey = "overview" | "specs" | "reviews" | "related";
 
@@ -34,7 +35,6 @@ const ProductDetails = () => {
   const { currentUser } = useCurrentUser();
   const { data: product, isLoading } = useProduct(id!);
 
-  const [activeImage, setActiveImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
@@ -53,11 +53,7 @@ const ProductDetails = () => {
 
   const toggleWishlistMutation = useMutation({
     mutationFn: (productId: string) => {
-      const data = queryClient.getQueryData<WishlistResponse>(["wishlist"]);
-      const exists = (data?.wishlist?.products ?? []).some(
-        (p) => p._id === productId,
-      );
-      return toggleWishlistItem(productId, !exists);
+      return toggleWishlistItem(productId, !isWishlisted);
     },
     onMutate: async (productId) => {
       if (!product) return;
@@ -139,12 +135,7 @@ const ProductDetails = () => {
   }
 
   // ---------- Derived data ----------
-  const images =
-    product.images && product.images.length > 0
-      ? product.images
-      : product.imageUrl
-        ? [product.imageUrl]
-        : [];
+  const mainImage = getProductImage(product);
 
   const hasDiscount =
     product.comparePrice != null && product.comparePrice > product.price;
@@ -273,9 +264,9 @@ const ProductDetails = () => {
         {/* ---------- Image gallery ---------- */}
         <div>
           <div className="group aspect-square w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-            {images.length > 0 ? (
+            {mainImage ? (
               <img
-                src={images[activeImage]}
+                src={mainImage}
                 alt={product.title}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -286,28 +277,6 @@ const ProductDetails = () => {
             )}
           </div>
 
-          {images.length > 1 && (
-            <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
-              {images.map((img, index) => (
-                <button
-                  key={img + index}
-                  type="button"
-                  onClick={() => setActiveImage(index)}
-                  className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition-colors ${
-                    activeImage === index
-                      ? "border-[#E0A421]"
-                      : "border-slate-200 hover:border-slate-300"
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`${product.title} ${index + 1}`}
-                    className="h-full w-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* ---------- Buy box ---------- */}
@@ -436,8 +405,8 @@ const ProductDetails = () => {
               </p>
             )}
 
-          {/* Quantity + wishlist */}
-          <div className="mt-6 flex items-center gap-3">
+          {/* Quantity + Actions + Wishlist — single row */}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <div className="flex items-center rounded-full border border-slate-300">
               <button
                 type="button"
@@ -468,29 +437,6 @@ const ProductDetails = () => {
 
             <button
               type="button"
-              onClick={handleWishlist}
-              disabled={toggleWishlistMutation.isPending}
-              aria-label={
-                isWishlisted ? "Remove from wishlist" : "Add to wishlist"
-              }
-              className={`ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                isWishlisted
-                  ? "border-red-200 bg-red-50 text-red-500"
-                  : "border-slate-300 text-slate-400 hover:border-red-300 hover:text-red-500"
-              }`}
-            >
-              {toggleWishlistMutation.isPending ? (
-                <FaSpinner className="h-4 w-4 animate-spin" />
-              ) : (
-                <FaHeart className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`} />
-              )}
-            </button>
-          </div>
-
-          {/* Action buttons */}
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <button
-              type="button"
               onClick={handleAddToCart}
               disabled={!inStock || addToCartMutation.isPending || isBuying}
               className={`flex items-center justify-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 ${
@@ -507,7 +453,7 @@ const ProductDetails = () => {
                 <FaShoppingCart />
               )}
               {added
-                ? "Added to Cart"
+                ? "Added"
                 : addToCartMutation.isPending
                   ? "Adding..."
                   : "Add to Cart"}
@@ -525,6 +471,26 @@ const ProductDetails = () => {
                 <FaBolt />
               )}
               {isBuying ? "Processing..." : "Buy Now"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleWishlist}
+              disabled={toggleWishlistMutation.isPending}
+              aria-label={
+                isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+              }
+              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                isWishlisted
+                  ? "border-red-200 bg-red-50 text-red-500"
+                  : "border-slate-300 text-slate-400 hover:border-red-300 hover:text-red-500"
+              }`}
+            >
+              {toggleWishlistMutation.isPending ? (
+                <FaSpinner className="h-4 w-4 animate-spin" />
+              ) : (
+                <FaHeart className={`h-5 w-5 ${isWishlisted ? "fill-current" : ""}`} />
+              )}
             </button>
           </div>
 

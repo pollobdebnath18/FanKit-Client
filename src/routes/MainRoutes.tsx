@@ -11,6 +11,7 @@ import About from "../pages/about/About";
 import Contact from "../pages/contact/Contact";
 import Blog from "../pages/blog/Blog";
 import Collections from "../pages/collections/Collections";
+import Wishlist from "../pages/wishlist/Wishlist";
 
 export const MainRoutes = {
   path: "/",
@@ -63,7 +64,7 @@ export const MainRoutes = {
 
     {
       path: "wishlist",
-      element: <h1>Wishlist</h1>,
+      Component: Wishlist,
     },
   ],
 };

@@ -1,6 +1,7 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { motion } from "framer-motion";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   FaHeart,
   FaShoppingBag,
@@ -8,11 +9,13 @@ import {
   FaStar,
   FaRegStar,
   FaCheck,
+  FaSpinner,
 } from "react-icons/fa";
 import type { Product } from "../../api/product.api";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { useAuthSession } from "../../hooks/useAuthSession";
-import { toggleWishlistItem } from "../../api/wishlist.api";
+import { useWishlist } from "../../hooks/useWishlist";
+import { toggleWishlistItem, type WishlistResponse } from "../../api/wishlist.api";
 import { addCartItem } from "../../api/cart.api";
 import { getProductImage } from "../../lib/productImage";
 
@@ -54,14 +57,21 @@ const JerseyCard = ({
   index = 0,
 }: JerseyCardProps) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: session } = useAuthSession();
   const { currentUser } = useCurrentUser();
 
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const isLoggedIn = !!session?.user || !!currentUser;
+  const { data: wishlistData } = useWishlist(isLoggedIn);
+  const wishlistIds = useMemo(
+    () => new Set((wishlistData?.wishlist?.products ?? []).map((p) => p._id)),
+    [wishlistData],
+  );
+  const isWishlisted = wishlistIds.has(product._id);
+
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
 
-  const isLoggedIn = !!session?.user || !!currentUser;
   const image = getProductImage(product);
   const price = product.price ?? 0;
   const comparePrice = product.comparePrice ?? null;
@@ -101,22 +111,49 @@ const JerseyCard = ({
     [isLoggedIn, navigate, product._id, product.sizes],
   );
 
+  const toggleWishlistMutation = useMutation({
+    mutationFn: (productId: string) => {
+      return toggleWishlistItem(productId, !isWishlisted);
+    },
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey: ["wishlist"] });
+      const previous = queryClient.getQueryData<WishlistResponse>(["wishlist"]);
+      queryClient.setQueryData<WishlistResponse>(["wishlist"], (old) => {
+        const current = old?.wishlist?.products ?? [];
+        const exists = current.some((p) => p._id === productId);
+        return {
+          success: true,
+          wishlist: {
+            _id: old?.wishlist?._id ?? "optimistic",
+            products: exists
+              ? current.filter((p) => p._id !== productId)
+              : [{ ...product }, ...current],
+          },
+        };
+      });
+      return { previous };
+    },
+    onError: (_err, _productId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["wishlist"], context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+    },
+  });
+
   const handleWishlist = useCallback(
-    async (e: React.MouseEvent) => {
+    (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
       if (!isLoggedIn) {
         navigate("/signin");
         return;
       }
-      setIsWishlisted((prev) => !prev);
-      try {
-        await toggleWishlistItem(product._id, !isWishlisted);
-      } catch {
-        setIsWishlisted((prev) => !prev);
-      }
+      toggleWishlistMutation.mutate(product._id);
     },
-    [isLoggedIn, navigate, product._id, isWishlisted],
+    [isLoggedIn, navigate, product._id, toggleWishlistMutation],
   );
 
   const handleQuickView = useCallback(
@@ -167,14 +204,19 @@ const JerseyCard = ({
             </div>
             <button
               onClick={handleWishlist}
-              aria-label="Add to wishlist"
-              className={`rounded-full p-2 transition ${
+              disabled={toggleWishlistMutation.isPending}
+              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              className={`rounded-full p-2 transition disabled:cursor-not-allowed disabled:opacity-60 ${
                 isWishlisted
                   ? "text-red-500"
                   : "text-slate-300 hover:text-red-500"
               }`}
             >
-              <FaHeart className="h-4 w-4" />
+              {toggleWishlistMutation.isPending ? (
+                <FaSpinner className="h-4 w-4 animate-spin" />
+              ) : (
+                <FaHeart className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`} />
+              )}
             </button>
           </div>
           <p className="mt-1 line-clamp-1 text-xs text-slate-500">
@@ -263,16 +305,23 @@ const JerseyCard = ({
         <div className="absolute right-3 bottom-3 z-10 flex flex-col gap-2">
           <button
             onClick={handleWishlist}
-            aria-label="Add to wishlist"
-            className={`flex h-6 w-6 items-center justify-center rounded-full bg-white shadow transition ${
+            disabled={toggleWishlistMutation.isPending}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            className={`flex h-6 w-6 items-center justify-center rounded-full bg-white shadow transition disabled:cursor-not-allowed disabled:opacity-60 ${
               isWishlisted
                 ? "text-red-500"
                 : "text-slate-400 hover:text-red-500"
             }`}
           >
-            <FaHeart
-              className={isWishlisted ? "h-3.5 w-3.5 fill-current" : "h-3.5 w-3.5"}
-            />
+            {toggleWishlistMutation.isPending ? (
+              <FaSpinner className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <FaHeart
+                className={
+                  isWishlisted ? "h-3.5 w-3.5 fill-current" : "h-3.5 w-3.5"
+                }
+              />
+            )}
           </button>
           <button
             onClick={handleQuickView}
