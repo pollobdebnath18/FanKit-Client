@@ -63,7 +63,7 @@ const Banner = () => {
   const slide = slides[current];
 
   return (
-    <div>
+    <div className="">
       {/* Image Slider */}
       <div className="relative overflow-hidden aspect-[8/3] w-full">
         <AnimatePresence mode="wait">

@@ -9,7 +9,6 @@ import Shop from "../pages/shop/Shop";
 import LazyShopCategory from "../pages/shop/LazyShopCategory";
 import About from "../pages/about/About";
 import Contact from "../pages/contact/Contact";
-import Collections from "../pages/collections/Collections";
 import Wishlist from "../pages/wishlist/Wishlist";
 import Cart from "../pages/cart/Cart";
 
@@ -35,7 +34,6 @@ export const MainRoutes = {
       Component: Shop,
     },
     { path: "shop/:category", Component: LazyShopCategory },
-    { path: "collections", Component: Collections },
     {
       path: "contact",
       Component: Contact,

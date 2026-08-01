@@ -1,6 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { FaChevronDown, FaQuestionCircle } from "react-icons/fa";
+import { Link } from "react-router";
+
+const MotionLink = motion.create(Link);
 
 interface FAQItem {
   id: number;
@@ -203,7 +206,6 @@ const FAQ = () => {
           ))}
         </motion.div>
 
-       
         <div className="space-y-4 md:space-y-6">
           {filteredFaqs.map((item) => (
             <motion.div
@@ -225,7 +227,7 @@ const FAQ = () => {
                     <motion.h3
                       className="text-lg md:text-xl font-semibold text-slate-900 text-left"
                       animate={{
-                          color:
+                        color:
                           validExpandedId === item.id ? "#F5A623" : "#1e293b",
                       }}
                       transition={{ duration: 0.3 }}
@@ -297,16 +299,17 @@ const FAQ = () => {
             Can't find the answer you're looking for? Our customer support team
             is here to help.
           </p>
-          <motion.button
+          <MotionLink
+            to="/contact"
             whileHover={{
               scale: 1.05,
               boxShadow: "0 20px 25px -5px rgba(245,166,35,0.3)",
             }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 md:px-12 py-3 md:py-4 bg-[#F5A623] text-[#0B1F3A] font-bold rounded-xl shadow-lg hover:bg-[#e09518] transition-all duration-300 relative z-10"
+            className="relative z-10 px-8 py-3 md:px-12 md:py-4 rounded-xl bg-[#F5A623] text-[#0B1F3A] font-bold shadow-lg transition-all duration-300 hover:bg-[#e09518]"
           >
             Contact Support
-          </motion.button>
+          </MotionLink>
         </motion.div>
       </div>
 

@@ -1,18 +1,21 @@
 import Banner from "../../components/homepage/Banner";
-import Blogs from "../../components/homepage/Blogs";
-import FAQ from "../../components/homepage/FAQ";
+import ShopByTeam from "../../components/homepage/ShopByTeam";
 import NewArrivals from "../../components/homepage/NewArrivals";
-import Newsletter from "../../components/homepage/Newsletter";
 import PopularJerseys from "../../components/homepage/PopularJerseys";
 import Service from "../../components/homepage/Service";
 import Statistics from "../../components/homepage/Statistics";
 import Testimonials from "../../components/homepage/Testimonials";
+import FAQ from "../../components/homepage/FAQ";
+// import Newsletter from "../../components/homepage/Newsletter";
 
 const HomePage = () => {
   return (
     <div>
       {/* Hero Section */}
       <Banner />
+
+      {/* Browse by Team */}
+      <ShopByTeam />
 
       {/* Product Showcase */}
       <NewArrivals />
@@ -24,11 +27,10 @@ const HomePage = () => {
       <Testimonials />
 
       {/* Engagement & Support */}
-      <Blogs />
       <FAQ />
 
       {/* Conversions & Footer */}
-      <Newsletter />
+      {/* <Newsletter /> */}
     </div>
   );
 };

@@ -116,7 +116,7 @@ const Service = () => {
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
       viewport={{ once: true, amount: 0.3 }}
-      className="py-16 md:py-24 bg-linear-to-b from-white to-slate-50 overflow-hidden"
+      className="pt-16 md:py-24 bg-linear-to-b from-white to-slate-50 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
@@ -235,16 +235,7 @@ const Service = () => {
           viewport={{ once: true }}
           className="mt-16 md:mt-20 text-center"
         >
-          <motion.button
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 20px 25px -5px rgba(59, 130, 246, 0.3)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 md:px-12 py-3 md:py-4 bg-linear-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300"
-          >
-            Start Shopping Now
-          </motion.button>
+         
         </motion.div>
       </div>
 

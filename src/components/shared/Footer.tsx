@@ -1,10 +1,5 @@
 import { motion } from "framer-motion";
-import {
-  FaFacebook,
-  FaTwitter,
-  FaInstagram,
-  FaLinkedin,
-} from "react-icons/fa";
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { MdEmail, MdLocationOn, MdPhone } from "react-icons/md";
 import FanKitLogo from "../../assets/fankit-logo.svg";
 
@@ -49,15 +44,6 @@ const Footer = () => {
     },
   };
 
-  const buttonVariants = {
-    initial: { scale: 1 },
-    hover: {
-      scale: 1.05,
-      transition: { duration: 0.3 },
-    },
-    tap: { scale: 0.95 },
-  };
-
   return (
     <motion.footer
       initial={{ opacity: 0 }}
@@ -73,13 +59,13 @@ const Footer = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-12"
+          className="grid grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-12"
         >
           {/* Brand Section */}
           <motion.div variants={itemVariants} className="space-y-4">
-           <div className="flex justify-cnter items-center">
-            <img src={FanKitLogo} alt="FanKit Logo" className="w-14 h-14" />
-            <h3 className="text-2xl font-bold text-white ml-4">FanKit</h3>
+            <div className="flex justify-cnter items-center">
+              <img src={FanKitLogo} alt="FanKit Logo" className="w-14 h-14" />
+              <h3 className="text-2xl font-bold text-white ml-4">FanKit</h3>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
               Elevate your fan experience with our premium collection of
@@ -112,16 +98,16 @@ const Footer = () => {
             </motion.div>
           </motion.div>
 
-          {/* Products */}
+          {/* Navigation */}
           <motion.div variants={itemVariants} className="space-y-4">
-            <h4 className="text-lg font-semibold text-white mb-4">Products</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">
+              Quick Links
+            </h4>
             <ul className="space-y-2">
               {[
-                "Apparel",
-                "Accessories",
-                "Limited Edition",
-                "Collectibles",
-                "Digital",
+                { label: "Home", href: "/" },
+                { label: "About", href: "/about" },
+                { label: "Contact", href: "/contact" },
               ].map((item, idx) => (
                 <motion.li
                   key={idx}
@@ -129,60 +115,35 @@ const Footer = () => {
                   initial="initial"
                   whileHover="hover"
                 >
-                  <a href="#" className="text-sm font-medium">
-                    {item}
+                  <a href={item.href} className="text-sm font-medium">
+                    {item.label}
                   </a>
                 </motion.li>
               ))}
             </ul>
           </motion.div>
 
-          {/* Company */}
+          {/* Category */}
           <motion.div variants={itemVariants} className="space-y-4">
-            <h4 className="text-lg font-semibold text-white mb-4">Company</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Category</h4>
             <ul className="space-y-2">
-              {["About Us", "Blog", "Careers", "Press", "Partners"].map(
-                (item, idx) => (
-                  <motion.li
-                    key={idx}
-                    variants={linkHoverVariants}
-                    initial="initial"
-                    whileHover="hover"
-                  >
-                    <a href="#" className="text-sm font-medium">
-                      {item}
-                    </a>
-                  </motion.li>
-                ),
-              )}
+              {[
+                { label: "Cricket", href: "/shop/cricket" },
+                { label: "Football", href: "/shop/football" },
+                { label: "Accessories", href: "/shop/accessories" },
+              ].map((item, idx) => (
+                <motion.li
+                  key={idx}
+                  variants={linkHoverVariants}
+                  initial="initial"
+                  whileHover="hover"
+                >
+                  <a href={item.href} className="text-sm font-medium">
+                    {item.label}
+                  </a>
+                </motion.li>
+              ))}
             </ul>
-          </motion.div>
-
-          {/* Newsletter */}
-          <motion.div variants={itemVariants} className="space-y-4">
-            <h4 className="text-lg font-semibold text-white mb-4">
-              Newsletter
-            </h4>
-            <p className="text-sm text-gray-400 mb-4">
-              Subscribe to get exclusive deals and updates.
-            </p>
-            <div className="space-y-2">
-              <motion.input
-                whileFocus={{ scale: 1.02 }}
-                type="email"
-                placeholder="Enter your email"
-                className="w-full px-4 py-2 rounded-lg bg-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-              />
-              <motion.button
-                variants={buttonVariants}
-                initial="initial"
-                whileHover="hover"
-                whileTap="tap"
-                className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-[#F5A623] to-[#e09518] text-[#0B1F3A] font-bold hover:from-[#e09518] hover:to-[#c87d10] transition-all duration-300"
-              >
-                Subscribe
-              </motion.button>
-            </div>
           </motion.div>
         </motion.div>
 
