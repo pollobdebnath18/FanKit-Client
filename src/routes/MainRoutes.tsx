@@ -13,6 +13,14 @@ import About from "../pages/about/About";
 import Contact from "../pages/contact/Contact";
 import Wishlist from "../pages/wishlist/Wishlist";
 import Cart from "../pages/cart/Cart";
+import Checkout from "../pages/checkout/Checkout";
+import OrdersPage from "../pages/orders/OrdersPage";
+import OrderDetailsPage from "../pages/orders/OrderDetailsPage";
+import PaymentSuccess from "../pages/payment/PaymentSuccess";
+import PaymentFailure from "../pages/payment/PaymentFailure";
+import PaymentCancel from "../pages/payment/PaymentCancel";
+import PrivateRoute from "./PrivateRoute";
+import ProfilePage from "../pages/profile/ProfilePage";
 
 export const MainRoutes = {
   path: "/",
@@ -62,12 +70,53 @@ export const MainRoutes = {
 
     {
       path: "profile",
-      element: <h1>User Profile</h1>,
+      element: (
+        <PrivateRoute>
+          <ProfilePage />
+        </PrivateRoute>
+      ),
     },
 
     {
       path: "orders",
-      element: <h1>My Orders</h1>,
+      element: (
+        <PrivateRoute>
+          <OrdersPage />
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "orders/:id",
+      element: (
+        <PrivateRoute>
+          <OrderDetailsPage />
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "checkout",
+      element: (
+        <PrivateRoute>
+          <Checkout />
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "payment/success",
+      element: <PaymentSuccess />,
+    },
+
+    {
+      path: "payment/failure",
+      element: <PaymentFailure />,
+    },
+
+    {
+      path: "payment/cancel",
+      element: <PaymentCancel />,
     },
 
     {

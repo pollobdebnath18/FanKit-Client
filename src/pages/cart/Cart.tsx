@@ -200,7 +200,6 @@ const Cart = () => {
                       <img
                         src={getProductImage(product)}
                         alt={product.title}
-                        crossOrigin="anonymous"
                         referrerPolicy="no-referrer"
                         className="h-24 w-24 rounded-xl object-cover"
                       />
@@ -275,7 +274,7 @@ const Cart = () => {
             </AnimatePresence>
 
             <Link
-              to="/shop"
+              to="/shop/all-products"
               className="mt-4 flex items-center gap-2 text-sm font-semibold text-[#1D4ED8] hover:underline"
             >
               <FaArrowLeft className="text-xs" />

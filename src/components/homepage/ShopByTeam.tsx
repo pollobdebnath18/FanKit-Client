@@ -127,7 +127,6 @@ const ShopByTeam = () => {
                       src={team.logo}
                       alt={team.name}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      crossOrigin="anonymous"
                       referrerPolicy="no-referrer"
                     />
                   </div>

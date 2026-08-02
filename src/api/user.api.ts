@@ -8,6 +8,9 @@ export interface User {
   emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
+  phone?: string;
+  image?: string;
+  avatar?: string;
 }
 
 export const UserAPI = {

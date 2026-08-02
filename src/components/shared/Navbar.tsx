@@ -363,19 +363,13 @@ const Navbar: FC = () => {
                                 <div className="my-1 border-t border-slate-100"></div>
                                 <Link
                                   to="/about"
-                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                  className="lg:hidden rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
                                 >
                                   About
                                 </Link>
                                 <Link
-                                  to="/blog"
-                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
-                                >
-                                  Blog
-                                </Link>
-                                <Link
                                   to="/contact"
-                                  className="block rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
+                                  className="lg:hidden rounded-lg px-3 py-2 text-sm text-gray-700 transition hover:bg-[#2563EB]/10 hover:text-[#1D4ED8]"
                                 >
                                   Contact
                                 </Link>

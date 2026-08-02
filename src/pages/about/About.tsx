@@ -253,7 +253,6 @@ const About = () => {
                 alt="FanKit fans celebrating"
                 className="relative w-full rounded-3xl object-top shadow-2xl shadow-black/30"
                 style={{ aspectRatio: "4/3" }}
-                crossOrigin="anonymous"
                 referrerPolicy="no-referrer"
               />
             </motion.div>
@@ -331,7 +330,6 @@ const About = () => {
                 alt="FanKit team"
                 className="relative w-full rounded-2xl object-cover shadow-xl"
                 style={{ aspectRatio: "4/3" }}
-                crossOrigin="anonymous"
                 referrerPolicy="no-referrer"
               />
               {/* floating badge */}

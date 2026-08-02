@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router";
 import { FaTrophy, FaTshirt, FaGem } from "react-icons/fa";
 import BannerImg from "../../assets/banner.png";
-import BannerImg2 from "../../assets/banner2.jpg";
-import BannerImg3 from "../../assets/banner3.webp";
+// import BannerImg2 from "../../assets/banner2.jpg";
+import BannerImg2 from "../../assets/spain_win.avif";
+// import BannerImg3 from "../../assets/banner3.webp";
+import BannerImg3 from "../../assets/world_cup_2019.webp";
 
 const slides = [
   {

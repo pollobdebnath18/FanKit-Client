@@ -9,6 +9,7 @@ export interface CartLineItem {
     _id: string;
     title: string;
     price: number;
+    comparePrice?: number | null;
     imageUrl?: string;
     images?: string[];
     stock: number;
