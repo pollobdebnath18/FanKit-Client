@@ -34,7 +34,7 @@ const teams = [
     sport: "Cricket",
   },
   {
-    name: "New Zealand",
+    name: "India",
     href: "/shop/cricket?type=international-jerseys&gender=men",
     logo: "https://i.ibb.co.com/JW3sdRmH/images-q-tbn-ANd9-Gc-Q-ugp-Fz-Bu-UTi4c7h-Bpl370-Kj-F-Ucr0-MAe-BWa-Wd-R-89i-Tm10-Bj-Yerskuc-H-s-10.jpg",
     sport: "Cricket",

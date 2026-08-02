@@ -196,6 +196,11 @@ const Navbar: FC = () => {
                       className={`${linkBase} ${linkInactive}`}
                     >
                       {item.label}
+                      {item.badge && (
+                        <span className="ml-1.5 align-middle rounded-full bg-gradient-to-r from-red-500 to-orange-500 px-2 py-0.5 text-[9px] font-bold text-white">
+                          {item.badge}
+                        </span>
+                      )}
                     </Link>
                     <button
                       type="button"
@@ -525,6 +530,11 @@ const Navbar: FC = () => {
                           className={`flex-1 px-4 py-2 font-semibold rounded-lg transition-all ${linkInactive}`}
                         >
                           {item.label}
+                          {item.badge && (
+                            <span className="ml-1.5 align-middle rounded-full bg-gradient-to-r from-red-500 to-orange-500 px-2 py-0.5 text-[9px] font-bold text-white">
+                              {item.badge}
+                            </span>
+                          )}
                         </Link>
                         <button
                           type="button"

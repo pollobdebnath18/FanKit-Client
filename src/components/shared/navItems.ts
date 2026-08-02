@@ -12,6 +12,7 @@ export interface DropdownItem {
   label: string;
   href: string;
   menu: NavLinkItem[] | NavGroup[];
+  badge?: string;
 }
 
 export type NavEntry =
@@ -21,18 +22,17 @@ export type NavEntry =
       label: string;
       href: string;
       menu: NavLinkItem[] | NavGroup[];
+      badge?: string;
     };
 
 // ---------- Dropdown data (REQUIREMENTS.md §4.2) ----------
 
-const shopMenu: NavLinkItem[] = [
-  { label: "All Products", href: "/shop/all-products" },
-  { label: "Football", href: "/shop/football" },
-  { label: "Cricket", href: "/shop/cricket" },
-  { label: "Accessories", href: "/shop/accessories" },
+const offersMenu: NavLinkItem[] = [
+  { label: "Today's Deals", href: "/offers" },
   { label: "New Arrivals", href: "/shop/all-products?newArrival=true" },
   { label: "Best Sellers", href: "/shop/all-products?sort=best-selling" },
-  { label: "Sale", href: "/shop/all-products?onSale=true" },
+  { label: "Clearance Sale", href: "/shop/all-products?onSale=true" },
+  { label: "All Products", href: "/shop/all-products" },
 ];
 
 const footballMenu: NavGroup[] = [
@@ -101,10 +101,10 @@ const dropdownItems: DropdownItem[] = [
   { label: "Football", href: "/shop/football", menu: footballMenu },
   { label: "Cricket", href: "/shop/cricket", menu: cricketMenu },
   { label: "Accessories", href: "/shop/accessories", menu: accessoriesMenu },
-  { label: "Shop", href: "/shop", menu: shopMenu },
+  { label: "Offers", href: "/offers", menu: offersMenu, badge: "HOT" },
 ];
 
-// Nav serial: Home, Football, Cricket, Accessories, Shop, About, Blog, Contact
+// Nav serial: Home, Football, Cricket, Accessories, Offers, About, Blog, Contact
 export const navItems: NavEntry[] = [
   { type: "link", label: "Home", href: "/", end: true },
   ...dropdownItems.map((item) => ({
@@ -112,6 +112,7 @@ export const navItems: NavEntry[] = [
     label: item.label,
     href: item.href,
     menu: item.menu,
+    badge: item.badge,
   })),
   { type: "link", label: "About", href: "/about" },
   { type: "link", label: "Contact", href: "/contact" },

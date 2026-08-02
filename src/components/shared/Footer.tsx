@@ -26,6 +26,12 @@ const Footer = () => {
     },
   };
 
+  const buttonVariants = {
+    initial: { scale: 1 },
+    hover: { scale: 1.03 },
+    tap: { scale: 0.97 },
+  };
+
   const linkHoverVariants = {
     initial: { x: 0, color: "#a0aec0" },
     hover: {
@@ -59,7 +65,7 @@ const Footer = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
-          className="grid grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-12"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-12"
         >
           {/* Brand Section */}
           <motion.div variants={itemVariants} className="space-y-4">
@@ -108,6 +114,7 @@ const Footer = () => {
                 { label: "Home", href: "/" },
                 { label: "About", href: "/about" },
                 { label: "Contact", href: "/contact" },
+                { label: "Offers", href: "/offers" },
               ].map((item, idx) => (
                 <motion.li
                   key={idx}
@@ -128,6 +135,7 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-white mb-4">Category</h4>
             <ul className="space-y-2">
               {[
+                { label: "All Products", href: "/shop/all-products" },
                 { label: "Cricket", href: "/shop/cricket" },
                 { label: "Football", href: "/shop/football" },
                 { label: "Accessories", href: "/shop/accessories" },
@@ -144,6 +152,33 @@ const Footer = () => {
                 </motion.li>
               ))}
             </ul>
+          </motion.div>
+
+          {/* Newsletter */}
+          <motion.div variants={itemVariants} className="space-y-4">
+            <h4 className="text-lg font-semibold text-white mb-4">
+              Newsletter
+            </h4>
+            <p className="text-sm text-gray-400 mb-4">
+              Subscribe to get exclusive deals and updates.
+            </p>
+            <div className="space-y-2">
+              <motion.input
+                whileFocus={{ scale: 1.02 }}
+                type="email"
+                placeholder="Enter your email"
+                className="w-full px-4 py-2 rounded-lg bg-slate-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              />
+              <motion.button
+                variants={buttonVariants}
+                initial="initial"
+                whileHover="hover"
+                whileTap="tap"
+                className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-[#F5A623] to-[#e09518] text-[#0B1F3A] font-bold hover:from-[#e09518] hover:to-[#c87d10] transition-all duration-300"
+              >
+                Subscribe
+              </motion.button>
+            </div>
           </motion.div>
         </motion.div>
 

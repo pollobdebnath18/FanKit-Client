@@ -8,6 +8,7 @@ import ErrorPage from "../components/error/ErrorPage";
 import ProductDetails from "../pages/products/ProductDetails";
 import Shop from "../pages/shop/Shop";
 import LazyShopCategory from "../pages/shop/LazyShopCategory";
+import LazyOffersPage from "../pages/offers/LazyOffersPage";
 import About from "../pages/about/About";
 import Contact from "../pages/contact/Contact";
 import Wishlist from "../pages/wishlist/Wishlist";
@@ -35,6 +36,10 @@ export const MainRoutes = {
       Component: Shop,
     },
     { path: "shop/:category", Component: LazyShopCategory },
+    {
+      path: "offers",
+      Component: LazyOffersPage,
+    },
     {
       path: "contact",
       Component: Contact,
