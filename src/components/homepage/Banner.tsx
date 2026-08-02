@@ -89,7 +89,7 @@ const Banner = () => {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="absolute left-6 top-3 z-10 md:left-12 md:top-5"
           >
-            <h2 className="text-xl font-black uppercase leading-snug tracking-wide text-[#F5A623] drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] md:text-3xl">
+            <h2 className="text-[12px] md:text-xl font-black uppercase leading-snug tracking-wide text-[#F5A623] drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] lg:text-3xl">
               Wear Your Team.
               <br />
               Live The Game.

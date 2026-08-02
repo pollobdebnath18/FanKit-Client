@@ -22,6 +22,7 @@ export interface Product {
   sport?: string;
   gender?: string;
   category?: string;
+  subcategory?: string | null;
   type?: string | null;
   team: string;
   brand?: string;

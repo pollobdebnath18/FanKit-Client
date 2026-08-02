@@ -13,8 +13,8 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
 
   if (isPending || isLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        Loading...
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <span className="loading loading-spinner loading-lg text-primary" />
       </div>
     );
   }

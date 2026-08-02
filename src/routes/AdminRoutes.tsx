@@ -1,14 +1,15 @@
 import ErrorPage from "../components/error/ErrorPage";
 import AdminLayout from "../layout/AdminLayout";
 import Dashboard from "../pages/admin/Dashboard";
-import { Navigate } from "react-router";
-import AdminRoute from "./AdminRoute"; 
-import  AddProduct from "../pages/admin/AddProduct";
 import ManageProducts from "../pages/admin/ManageProducts";
+import AddProduct from "../pages/admin/AddProduct";
+import Categories from "../pages/admin/Categories";
 import Orders from "../pages/admin/Orders";
 import Users from "../pages/admin/Users";
 import Analytics from "../pages/admin/Analytics";
 import Settings from "../pages/admin/Settings";
+import { Navigate } from "react-router";
+import AdminRoute from "./AdminRoute";
 
 export const AdminRoutes = {
   path: "/admin",
@@ -32,27 +33,31 @@ export const AdminRoutes = {
     },
     {
       path: "products",
-      element: <ManageProducts/>,
+      element: <ManageProducts />,
     },
     {
       path: "add-product",
-      element: <AddProduct/>,
+      element: <AddProduct />,
+    },
+    {
+      path: "categories",
+      element: <Categories />,
     },
     {
       path: "orders",
-      element: <Orders/>,
+      element: <Orders />,
     },
     {
       path: "users",
-      element: <Users/>,  
+      element: <Users />,
     },
     {
       path: "analytics",
-      Component : Analytics,
+      element: <Analytics />,
     },
     {
       path: "settings",
-      Component : Settings,
+      element: <Settings />,
     },
   ],
 };

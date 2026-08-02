@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { FaEye, FaTrash, FaPlus, FaSearch, FaTshirt } from "react-icons/fa";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProductAPI, type Product } from "../../api/product.api";
@@ -7,14 +7,20 @@ import DeleteModal from "../../components/admin/DeleteModal";
 
 const ManageProducts = () => {
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: products = [], isLoading } = useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: ProductAPI.getAll,
   });
 
-  const [search, setSearch] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const search = searchParams.get("search") ?? "";
+
+  const handleSearchChange = (value: string) => {
+    setSearchParams(value ? { search: value } : {}, { replace: true });
+  };
 
   const filtered = products.filter(
     (p) =>
@@ -77,8 +83,8 @@ const ManageProducts = () => {
           type="text"
           placeholder="Search by title or team..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 outline-none shadow-sm focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] transition"
+          onChange={(e) => handleSearchChange(e.target.value)}
+          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 outline-none shadow-sm focus:border-primary focus:ring-1 focus:ring-primary transition"
         />
       </div>
 

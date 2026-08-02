@@ -171,10 +171,10 @@ const Cart = () => {
             Looks like you haven&apos;t added anything yet.
           </p>
           <Link
-            to="/shop"
+            to="/shop/all-products"
             className="mt-6 rounded-full bg-[#0B1F3A] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#132C52]"
           >
-            Browse Shop
+            Browse Products
           </Link>
         </div>
       ) : (

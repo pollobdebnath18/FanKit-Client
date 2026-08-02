@@ -1,99 +1,166 @@
-import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  FaChartLine,
-  FaTshirt,
-  FaPlusCircle,
-  FaShoppingBag,
-  FaUsers,
-  FaChartBar,
-  FaCog,
-  FaBars,
+  FaArrowLeft,
+  FaChevronLeft,
+  FaChevronRight,
+  FaSignOutAlt,
   FaTimes,
 } from "react-icons/fa";
+import { useQueryClient } from "@tanstack/react-query";
+import { authClient } from "../../lib/auth-client";
+import { NAV_ITEMS, isNavSection } from "./navItems";
 import SidebarItem from "./SidebarItem";
+import SidebarSection from "./SidebarSection";
 
-const navItems = [
-  { icon: FaChartLine, label: "Dashboard", to: "/admin/dashboard" },
-  { icon: FaTshirt, label: "Manage Products", to: "/admin/products" },
-  { icon: FaPlusCircle, label: "Add Product", to: "/admin/add-product" },
-  { icon: FaShoppingBag, label: "Orders", to: "/admin/orders" },
-  { icon: FaUsers, label: "Users", to: "/admin/users" },
-  { icon: FaChartBar, label: "Analytics", to: "/admin/analytics" },
-  { icon: FaCog, label: "Settings", to: "/admin/settings" },
-];
+interface SidebarProps {
+  collapsed: boolean;
+  mobileOpen: boolean;
+  onCloseMobile: () => void;
+  onToggleCollapsed: () => void;
+}
 
-const Sidebar = () => {
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+const LogoMark = () => (
+  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-sky-500 text-sm font-black text-primary-content shadow-md shadow-primary/30">
+    F
+  </div>
+);
 
-  const closeMobile = () => setIsMobileOpen(false);
+const Sidebar = ({
+  collapsed,
+  mobileOpen,
+  onCloseMobile,
+  onToggleCollapsed,
+}: SidebarProps) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const handleNavigate = () => onCloseMobile();
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+    queryClient.invalidateQueries({ queryKey: ["current-user"] });
+    onCloseMobile();
+    navigate("/signin", { replace: true });
+  };
 
   return (
     <>
-      {/* Mobile toggle button */}
-      <button
-        type="button"
-        onClick={() => setIsMobileOpen(true)}
-        className="fixed left-4 top-4 z-30 flex h-10 w-10 items-center justify-center rounded-lg bg-[#0B1F3A] text-white shadow-lg lg:hidden"
-        aria-label="Open menu"
-      >
-        <FaBars />
-      </button>
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onCloseMobile}
+            className="fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm lg:hidden"
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
 
-      {/* Mobile overlay */}
-      {isMobileOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={closeMobile}
-        />
-      )}
-
-      {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col border-r border-white/10 bg-[#0B1F3A] transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
-          isMobileOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 shrink-0 flex-col bg-brand text-white transition-all duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
+          collapsed ? "lg:w-[76px]" : "lg:w-64"
+        } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        aria-label="Admin navigation"
       >
         {/* Brand header */}
-        <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#E0A421] bg-[#0B1F3A]">
-              <span className="text-xs font-black text-[#E0A421]">FK</span>
-            </div>
-            <div>
-              <p className="text-base font-black leading-none text-white">
-                Fan<span className="text-[#E0A421]">Kit</span>
+        <div
+          className={`flex items-center gap-3 border-b border-white/10 py-5 ${
+            collapsed ? "justify-center px-2" : "px-5"
+          }`}
+        >
+          <LogoMark />
+          {!collapsed && (
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-base font-black leading-none text-white">
+                Fan<span className="text-primary">Kit</span>
               </p>
-              <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
                 Admin Panel
               </p>
             </div>
-          </div>
+          )}
           <button
             type="button"
-            onClick={closeMobile}
-            className="text-slate-400 hover:text-white lg:hidden"
+            onClick={onToggleCollapsed}
+            className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white lg:flex"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? (
+              <FaChevronRight className="h-3.5 w-3.5" />
+            ) : (
+              <FaChevronLeft className="h-3.5 w-3.5" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={onCloseMobile}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
             aria-label="Close menu"
           >
-            <FaTimes />
+            <FaTimes className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Nav items */}
-        <nav className="flex-1 space-y-1.5 overflow-y-auto px-4 py-6">
-          {navItems.map((item) => (
-            <SidebarItem
-              key={item.to}
-              icon={item.icon}
-              label={item.label}
-              to={item.to}
-              onClick={closeMobile}
-            />
-          ))}
+        {/* Navigation */}
+        <nav className="sidebar-scroll flex-1 space-y-1 overflow-y-auto px-3 py-4">
+          {NAV_ITEMS.map((item) =>
+            isNavSection(item) ? (
+              <SidebarSection
+                key={item.label}
+                section={item}
+                collapsed={collapsed}
+                onExpand={onToggleCollapsed}
+                onNavigate={handleNavigate}
+              />
+            ) : (
+              <SidebarItem
+                key={item.to}
+                link={item}
+                collapsed={collapsed}
+                onNavigate={handleNavigate}
+              />
+            ),
+          )}
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-white/10 px-6 py-4">
-          <p className="text-[11px] text-slate-500">FanKit Admin · v1.0</p>
+        <div className="border-t border-white/10 p-3">
+          <div className="space-y-1">
+            <div
+              className={collapsed ? "tooltip tooltip-right" : ""}
+              data-tip={collapsed ? "Back to Website" : undefined}
+            >
+              <Link
+                to="/"
+                onClick={handleNavigate}
+                className={`flex items-center rounded-xl py-2.5 text-sm font-semibold text-slate-300 transition-all duration-200 hover:bg-white/10 hover:text-white ${
+                  collapsed ? "justify-center" : "gap-3 px-3.5"
+                }`}
+              >
+                <FaArrowLeft className="h-[18px] w-[18px] shrink-0" />
+                {!collapsed && <span className="truncate">Back to Website</span>}
+              </Link>
+            </div>
+            <div
+              className={collapsed ? "tooltip tooltip-right" : ""}
+              data-tip={collapsed ? "Logout" : undefined}
+            >
+              <button
+                type="button"
+                onClick={handleLogout}
+                className={`flex w-full items-center rounded-xl py-2.5 text-sm font-semibold text-red-300 transition-all duration-200 hover:bg-red-500/10 hover:text-red-200 ${
+                  collapsed ? "justify-center" : "gap-3 px-3.5"
+                }`}
+              >
+                <FaSignOutAlt className="h-[18px] w-[18px] shrink-0" />
+                {!collapsed && <span className="truncate">Logout</span>}
+              </button>
+            </div>
+          </div>
         </div>
       </aside>
     </>

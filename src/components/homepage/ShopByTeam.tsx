@@ -84,8 +84,8 @@ const cardVariants = {
 
 const ShopByTeam = () => {
   return (
-    <section className="py-16 md:py-20 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
+    <section className="py-12 md:py-20 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 md:mt-24">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}

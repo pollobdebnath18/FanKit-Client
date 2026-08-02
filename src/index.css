@@ -1,9 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 @import "tailwindcss";
 @plugin "daisyui";
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+@theme {
+  --color-brand: #0b1f3a;
+  --color-brand-soft: #1a3a5c;
+  --color-brand-light: #2a4a6f;
+}
+
+/* Brand palette overrides — daisyUI 5 emits theme vars at :root, so this
+   unlayered block (kept after the plugin) wins the cascade. */
+:root {
+  --color-primary: #2563eb;
+  --color-primary-content: #ffffff;
+  --color-secondary: #3b82f6;
+  --color-secondary-content: #ffffff;
+  --color-accent: #f59e0b;
+  --color-accent-content: #ffffff;
+  --radius-box: 1rem;
+  --radius-field: 0.75rem;
+  --radius-selector: 0.5rem;
+}
 
 body {
   font-family: "Inter", sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
 }
 
 @keyframes marquee {

@@ -13,12 +13,37 @@ export interface User {
   avatar?: string;
 }
 
+interface UsersResponse {
+  success: boolean;
+  users: User[];
+}
+
+interface MessageResponse {
+  success: boolean;
+  message: string;
+}
+
+export type UserRole = User["role"];
+
 export const UserAPI = {
   getCurrentUser() {
     return apiClient<User>("/api/users/me");
   },
 
   getAllUsers() {
-    return apiClient<User[]>("/api/users");
+    return apiClient<UsersResponse>("/api/users").then((res) => res.users);
+  },
+
+  updateRole(id: string, role: UserRole) {
+    return apiClient<MessageResponse>(`/api/users/${id}/role`, {
+      method: "PATCH",
+      body: JSON.stringify({ role }),
+    });
+  },
+
+  deleteUser(id: string) {
+    return apiClient<MessageResponse>(`/api/users/${id}`, {
+      method: "DELETE",
+    });
   },
 };
