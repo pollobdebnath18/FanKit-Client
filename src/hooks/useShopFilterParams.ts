@@ -12,6 +12,9 @@ export interface ShopFilterParams {
   page?: number;
   price?: string;
   availability?: "in-stock" | "out-of-stock";
+  newArrival?: boolean;
+  onSale?: boolean;
+  featured?: boolean;
 }
 
 /**
@@ -36,6 +39,9 @@ export const useShopFilterParams = (sport: string) => {
         | "in-stock"
         | "out-of-stock"
         | null) ?? undefined,
+      newArrival: searchParams.get("newArrival") === "true",
+      onSale: searchParams.get("onSale") === "true",
+      featured: searchParams.get("featured") === "true",
     };
   }, [searchParams]);
 
@@ -85,13 +91,26 @@ export const useShopFilterParams = (sport: string) => {
       minPrice: priceRange.min,
       maxPrice: priceRange.max,
       availability: params.availability,
+      newArrival: params.newArrival,
+      onSale: params.onSale,
+      featured: params.featured,
     }),
     [sport, params, priceRange],
   );
 
   const activeCount = useMemo(
     () =>
-      [params.type, params.gender, params.brand, params.search, params.price !== "all" && params.price, params.availability].filter(
+      [
+        params.type,
+        params.gender,
+        params.brand,
+        params.search,
+        params.price !== "all" && params.price,
+        params.availability,
+        params.newArrival,
+        params.onSale,
+        params.featured,
+      ].filter(
         Boolean,
       ).length,
     [params],

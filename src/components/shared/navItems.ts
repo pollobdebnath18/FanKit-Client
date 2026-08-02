@@ -30,9 +30,9 @@ const shopMenu: NavLinkItem[] = [
   { label: "Football", href: "/shop/football" },
   { label: "Cricket", href: "/shop/cricket" },
   { label: "Accessories", href: "/shop/accessories" },
-  { label: "New Arrivals", href: "/collections" },
-  { label: "Best Sellers", href: "/collections" },
-  { label: "Sale", href: "/collections" },
+  { label: "New Arrivals", href: "/shop/all-products?newArrival=true" },
+  { label: "Best Sellers", href: "/shop/all-products?sort=best-selling" },
+  { label: "Sale", href: "/shop/all-products?onSale=true" },
 ];
 
 const footballMenu: NavGroup[] = [

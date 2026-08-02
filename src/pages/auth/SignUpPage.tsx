@@ -98,16 +98,20 @@ const SignUpPage = () => {
       }
 
       if (data?.user) {
-        // Set user role to 'user' in db
-        await fetch(`${import.meta.env.VITE_AUTH_API_URL}/api/users/set-role`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: data.user.email,
-          }),
-        });
+        // Set user role to 'user' in db (best-effort, never blocks signup)
+        try {
+          await fetch(`${import.meta.env.VITE_AUTH_API_URL}/api/users/set-role`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: data.user.email,
+            }),
+          });
+        } catch (e) {
+          console.error("Failed to set user role:", e);
+        }
 
         alert("Account created successfully");
         navigate("/");

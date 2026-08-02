@@ -19,7 +19,7 @@ const slides = [
     tagline: "Get your favourite team jersey at FanKit",
     cta: "Shop Now",
     discount: "Cut of 50% Discount",
-    href: "/collections/football",
+    href: "/shop/football",
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ const slides = [
     tagline: "Fresh kits from the top clubs & national teams",
     cta: "Shop Now",
     discount: "Cut of 30% Discount",
-    href: "/collections/new-arrivals",
+    href: "/shop/all-products?newArrival=true",
   },
   {
     id: 3,
@@ -46,7 +46,7 @@ const slides = [
     tagline: "Official fan merchandise, delivered to your door",
     cta: "Shop Now",
     discount: "Cut of 25% Discount",
-    href: "/collections/best-sellers",
+    href: "/shop/all-products?sort=best-selling",
   },
 ];
 

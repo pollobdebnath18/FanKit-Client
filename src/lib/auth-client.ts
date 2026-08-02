@@ -12,4 +12,25 @@ export const authClient = createAuthClient({
   },
 });
 
-export const { signIn, signUp, useSession } = authClient;
+type BetterFetchResponse<TData = unknown> = {
+  data: TData | null;
+  error: { message?: string; code?: string } | null;
+};
+
+type EmailOtpClient = {
+  requestPasswordReset: (input: {
+    email: string;
+  }) => Promise<BetterFetchResponse<{ success: boolean }>>;
+  resetPassword: (input: {
+    email: string;
+    otp: string;
+    password: string;
+  }) => Promise<BetterFetchResponse<{ success: boolean }>>;
+};
+
+const authClientTyped = authClient as unknown as {
+  emailOtp: EmailOtpClient;
+};
+
+export const { signIn, signUp, useSession, signOut } = authClient;
+export const emailOtp = authClientTyped.emailOtp;

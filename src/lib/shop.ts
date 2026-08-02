@@ -9,7 +9,17 @@ export interface ShopCategoryConfig {
   accent: string;
 }
 
+export const ALL_PRODUCTS_CONFIG: ShopCategoryConfig = {
+  slug: "all-products",
+  label: "All Products",
+  tagline: "Browse the complete FanKit collection",
+  heroFrom: "#111827",
+  heroTo: "#374151",
+  accent: "#F5A623",
+};
+
 export const SHOP_CATEGORIES: Record<string, ShopCategoryConfig> = {
+  [ALL_PRODUCTS_CONFIG.slug]: ALL_PRODUCTS_CONFIG,
   football: {
     slug: "football",
     label: "Football",
@@ -37,15 +47,6 @@ export const SHOP_CATEGORIES: Record<string, ShopCategoryConfig> = {
 };
 
 export const SHOP_CATEGORY_SLUGS = Object.keys(SHOP_CATEGORIES);
-
-export const ALL_PRODUCTS_CONFIG: ShopCategoryConfig = {
-  slug: "all-products",
-  label: "All Products",
-  tagline: "Browse the complete FanKit collection",
-  heroFrom: "#111827",
-  heroTo: "#374151",
-  accent: "#F5A623",
-};
 
 export const getShopCategory = (slug: string): ShopCategoryConfig | null =>
   SHOP_CATEGORIES[slug] ??
@@ -85,11 +86,10 @@ export interface PriceRangeOption {
 
 export const PRICE_RANGES: PriceRangeOption[] = [
   { value: "all", label: "All Prices", min: 0, max: Number.MAX_SAFE_INTEGER },
-  { value: "under-25", label: "Under $25", min: 0, max: 25 },
-  { value: "25-50", label: "$25 – $50", min: 25, max: 50 },
-  { value: "50-75", label: "$50 – $75", min: 50, max: 75 },
-  { value: "75-100", label: "$75 – $100", min: 75, max: 100 },
-  { value: "over-100", label: "Over $100", min: 100, max: Number.MAX_SAFE_INTEGER },
+  { value: "under-200", label: "Under - 300", min: 0, max: 200 },
+  { value: "200-400", label: "200 – 400", min: 200, max: 400 },
+  { value: "400-600", label: "400 – 600", min: 400, max: 600 },
+  { value: "over-600", label: "Over - 800", min: 600, max: Number.MAX_SAFE_INTEGER },
 ];
 
 export const getPriceRange = (value: string): PriceRangeOption =>

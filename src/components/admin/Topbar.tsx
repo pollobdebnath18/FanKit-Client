@@ -75,7 +75,7 @@ const Topbar = () => {
             Home
           </Link>
           <Link
-            to="/collections"
+            to="/shop/all-products"
             className="px-3 py-1.5 text-slate-600 hover:text-[#0B1F3A] hover:bg-slate-100 rounded-md font-semibold transition-all"
           >
             Collection

@@ -58,8 +58,9 @@ const Navbar: FC = () => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/collections?search=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/shop/all-products?search=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchOpen(false);
+      setIsMenuOpen(false);
       setSearchQuery("");
     }
   };

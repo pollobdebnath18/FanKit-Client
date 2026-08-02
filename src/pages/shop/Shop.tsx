@@ -100,7 +100,7 @@ const Shop = () => {
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
-                  to="/collections"
+                  to="/shop/all-products"
                   className="inline-flex items-center gap-2 px-7 py-3 bg-[#F5A623] text-[#0B1F3A] font-bold rounded-xl hover:bg-[#e09518] transition-all shadow-lg shadow-[#F5A623]/30"
                 >
                   Browse Collection <FaArrowRight />
@@ -216,7 +216,7 @@ const Shop = () => {
             </p>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="inline-block mt-8">
               <Link
-                to="/collections"
+                to="/shop/all-products"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-[#F5A623] text-[#0B1F3A] font-bold rounded-xl hover:bg-[#e09518] transition-all shadow-lg shadow-[#F5A623]/20"
               >
                 Explore Collection <FaArrowRight />

@@ -36,6 +36,9 @@ export interface ShopFilters {
   minPrice?: number;
   maxPrice?: number;
   availability?: "in-stock" | "out-of-stock";
+  newArrival?: boolean;
+  onSale?: boolean;
+  featured?: boolean;
 }
 
 export const ShopAPI = {
@@ -58,6 +61,9 @@ export const ShopAPI = {
       params.append("maxPrice", String(filters.maxPrice));
     if (filters.availability)
       params.append("availability", filters.availability);
+    if (filters.newArrival) params.append("newArrival", "true");
+    if (filters.onSale) params.append("onSale", "true");
+    if (filters.featured) params.append("featured", "true");
 
     return apiClient<ShopResponse>(
       `/api/products?${params.toString()}`,

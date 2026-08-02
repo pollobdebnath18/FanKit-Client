@@ -89,7 +89,7 @@ const offerings = [
     desc: "From Premier League giants to World Cup heroes — national teams, club sides, retro classics, and training kits in every size.",
     stats: ["200+ Clubs", "50+ National Teams", "Men / Women / Kids"],
     color: "from-emerald-500 to-green-600",
-    href: "/collections/football",
+    href: "/shop/football",
   },
   {
     icon: MdSportsCricket,
@@ -97,7 +97,7 @@ const offerings = [
     desc: "Rep your country or franchise with premium cricket jerseys. International series, IPL, BPL, and more.",
     stats: ["12+ Countries", "Franchise Kits", "All Formats"],
     color: "from-sky-500 to-blue-600",
-    href: "/collections/cricket",
+    href: "/shop/cricket",
   },
   {
     icon: FaGem,
@@ -105,7 +105,7 @@ const offerings = [
     desc: "Caps, scarves, wristbands, gym bags, and more. Complete your match-day look from head to toe.",
     stats: ["10+ Categories", "Team Logos", "Daily Essentials"],
     color: "from-amber-500 to-yellow-600",
-    href: "/collections/accessories",
+    href: "/shop/accessories",
   },
 ];
 
@@ -795,14 +795,14 @@ const About = () => {
 
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link
-                to="/collections/football"
+                to="/shop/football"
                 className="inline-flex items-center gap-2 rounded-full bg-[#F5A623] px-8 py-3.5 text-sm font-bold text-[#0B1F3A] shadow-lg shadow-[#F5A623]/25 transition-all duration-300 hover:bg-[#F5C542] hover:shadow-[#F5A623]/40"
               >
                 <FaFootballBall />
                 Shop Football
               </Link>
               <Link
-                to="/collections/cricket"
+                to="/shop/cricket"
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:border-white/40 hover:bg-white/10"
               >
                 <MdSportsCricket />

@@ -1,8 +1,29 @@
 import { type FormEvent, useState } from "react";
-import { FaEye, FaEyeSlash, FaGoogle, FaEnvelope, FaLock } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaEnvelope, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
 import { motion } from "framer-motion";
 import { authClient } from "../../lib/auth-client";
+
+const GoogleIcon = () => (
+  <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
+    <path
+      fill="#FFC107"
+      d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
+    />
+    <path
+      fill="#FF3D00"
+      d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"
+    />
+    <path
+      fill="#4CAF50"
+      d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
+    />
+    <path
+      fill="#1976D2"
+      d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
+    />
+  </svg>
+);
 
 interface SignInFormData {
   email: string;
@@ -14,15 +35,39 @@ interface SignInErrors {
   password?: string;
 }
 
+const getAuthHint = async (email: string) => {
+  try {
+    const response = await fetch(
+      `${
+        import.meta.env.VITE_AUTH_API_URL || ""
+      }/api/users/auth-status?email=${encodeURIComponent(email)}`,
+    );
+    const result = await response.json();
+
+    if (!result?.success) return "Invalid email or password.";
+
+    if (!result.exists) {
+      return "No account found with this email. Please create an account first.";
+    }
+    if (!result.hasPassword) {
+      return "This email uses Google sign-in. Please use the 'Sign in with Google' button instead.";
+    }
+    return "Incorrect password. Please try again, or use 'Forgot password' to reset it.";
+  } catch {
+    return "Invalid email or password.";
+  }
+};
+
 const SignInPage = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState<SignInFormData>({
+  const [showPassword, setShowPassword] = useState(false);  const [formData, setFormData] = useState<SignInFormData>({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState<SignInErrors>({});
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [serverError, setServerError] = useState("");
 
   const validate = () => {
@@ -50,6 +95,25 @@ const SignInPage = () => {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsGoogleSubmitting(true);
+    setServerError("");
+
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: window.location.origin,
+      });
+    } catch (err) {
+      setServerError(
+        err instanceof Error
+          ? err.message
+          : "Unable to sign in with Google. Please try again.",
+      );
+      setIsGoogleSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -62,6 +126,7 @@ const SignInPage = () => {
       const { data, error } = await authClient.signIn.email({
         email: formData.email,
         password: formData.password,
+        rememberMe,
       });
 
       type AuthUser = {
@@ -88,11 +153,14 @@ const SignInPage = () => {
         replace: true,
       });
     } catch (err) {
-      setServerError(
-        err instanceof Error
-          ? err.message
-          : "Unable to sign in. Please try again.",
-      );
+      const rawMessage =
+        err instanceof Error ? err.message : "Unable to sign in. Please try again.";
+
+      if (/invalid email or password/i.test(rawMessage)) {
+        setServerError(await getAuthHint(formData.email));
+      } else {
+        setServerError(rawMessage);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -122,6 +190,29 @@ const SignInPage = () => {
           <p className="mt-2 text-sm text-slate-400">
             Enter your details below to resume your experience.
           </p>
+        </div>
+
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={isGoogleSubmitting}
+          className="flex w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/[0.05] focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <GoogleIcon />
+          {isGoogleSubmitting ? (
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            <span>Sign in with Google</span>
+          )}
+        </motion.button>
+
+        <div className="my-6 flex items-center justify-between gap-4">
+          <div className="h-[1px] flex-1 bg-white/10" />
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            or
+          </span>
+          <div className="h-[1px] flex-1 bg-white/10" />
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
@@ -191,6 +282,8 @@ const SignInPage = () => {
             <label className="flex cursor-pointer items-center gap-2 select-none text-slate-400 hover:text-white transition-colors">
               <input
                 type="checkbox"
+                checked={rememberMe}
+                onChange={(event) => setRememberMe(event.target.checked)}
                 className="h-4 w-4 rounded-md border-white/10 bg-white/[0.02] text-cyan-500 accent-cyan-500 focus:ring-0"
               />
               <span>Remember me</span>
@@ -226,22 +319,6 @@ const SignInPage = () => {
             )}
           </motion.button>
         </form>
-
-        <div className="my-6 flex items-center justify-between gap-4">
-          <div className="h-[1px] flex-1 bg-white/10" />
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            or continue with
-          </span>
-          <div className="h-[1px] flex-1 bg-white/10" />
-        </div>
-
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          className="flex w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/[0.05]"
-        >
-          <FaGoogle className="h-4 w-4 text-red-400" />
-          <span>Google Account</span>
-        </motion.button>
 
         <p className="mt-8 text-center text-xs sm:text-sm text-slate-400">
           New to FanKit?{" "}
