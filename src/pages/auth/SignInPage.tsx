@@ -66,7 +66,7 @@ const SignInPage = () => {
   const [errors, setErrors] = useState<SignInErrors>({});
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+  const [isGoogleSubmitting] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [serverError, setServerError] = useState("");
 
