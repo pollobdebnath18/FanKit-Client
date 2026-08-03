@@ -100,7 +100,12 @@ const SignUpPage = () => {
       if (data?.user) {
         // Set user role to 'user' in db (best-effort, never blocks signup)
         try {
-          await fetch(`${import.meta.env.VITE_AUTH_API_URL}/api/users/set-role`, {
+          const authApiBaseUrl =
+            import.meta.env.VITE_AUTH_API_URL ||
+            import.meta.env.VITE_API_BASE_URL ||
+            (import.meta.env.DEV ? "http://localhost:8000" : "");
+
+          await fetch(`${authApiBaseUrl}/api/users/set-role`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -172,7 +177,9 @@ const SignUpPage = () => {
                 onChange={handleChange}
                 placeholder="Jane Doe"
                 className={`w-full rounded-2xl border bg-white/[0.02] py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15 ${
-                  errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : "border-white/10"
+                  errors.name
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                    : "border-white/10"
                 }`}
               />
             </div>
@@ -199,7 +206,9 @@ const SignUpPage = () => {
                 onChange={handleChange}
                 placeholder="you@example.com"
                 className={`w-full rounded-2xl border bg-white/[0.02] py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15 ${
-                  errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : "border-white/10"
+                  errors.email
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                    : "border-white/10"
                 }`}
               />
             </div>
@@ -226,7 +235,9 @@ const SignUpPage = () => {
                 onChange={handleChange}
                 placeholder="••••••••••••"
                 className={`w-full rounded-2xl border bg-white/[0.02] py-3.5 pl-11 pr-12 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15 ${
-                  errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : "border-white/10"
+                  errors.password
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                    : "border-white/10"
                 }`}
               />
               <button
@@ -235,7 +246,11 @@ const SignUpPage = () => {
                 onClick={() => setShowPassword((value) => !value)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
+                {showPassword ? (
+                  <FaEyeSlash className="h-4 w-4" />
+                ) : (
+                  <FaEye className="h-4 w-4" />
+                )}
               </button>
             </div>
             {errors.password && (
@@ -249,7 +264,7 @@ const SignUpPage = () => {
           <div className="flex flex-col">
             <span className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Confirm Password
-                </span>
+            </span>
             <div className="relative">
               <span className="absolute inset-y-0 left-4 flex items-center text-slate-500">
                 <FaLock className="h-4 w-4" />
@@ -261,16 +276,24 @@ const SignUpPage = () => {
                 onChange={handleChange}
                 placeholder="••••••••••••"
                 className={`w-full rounded-2xl border bg-white/[0.02] py-3.5 pl-11 pr-12 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15 ${
-                  errors.confirmPassword ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : "border-white/10"
+                  errors.confirmPassword
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                    : "border-white/10"
                 }`}
               />
               <button
                 type="button"
                 className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-white transition-colors"
                 onClick={() => setShowConfirmPassword((value) => !value)}
-                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                aria-label={
+                  showConfirmPassword ? "Hide password" : "Show password"
+                }
               >
-                {showConfirmPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
+                {showConfirmPassword ? (
+                  <FaEyeSlash className="h-4 w-4" />
+                ) : (
+                  <FaEye className="h-4 w-4" />
+                )}
               </button>
             </div>
             {errors.confirmPassword && (

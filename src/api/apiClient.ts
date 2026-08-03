@@ -1,4 +1,6 @@
-const BASE_URL = import.meta.env.VITE_AUTH_API_URL;
+const BASE_URL =
+  import.meta.env.VITE_AUTH_API_URL ||
+  (import.meta.env.DEV ? "http://localhost:8000" : "");
 
 export async function apiClient<T>(
   endpoint: string,
