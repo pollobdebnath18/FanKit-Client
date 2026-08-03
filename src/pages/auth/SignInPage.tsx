@@ -95,23 +95,9 @@ const SignInPage = () => {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleGoogleSignIn = async () => {
-    setIsGoogleSubmitting(true);
-    setServerError("");
-
-    try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: window.location.origin,
-      });
-    } catch (err) {
-      setServerError(
-        err instanceof Error
-          ? err.message
-          : "Unable to sign in with Google. Please try again.",
-      );
-      setIsGoogleSubmitting(false);
-    }
+  const handleGoogleSignIn = () => {
+    const baseURL = import.meta.env.VITE_AUTH_API_URL || "";
+    window.location.href = `${baseURL}/api/auth/sign-in/social?provider=google&callbackURL=${encodeURIComponent(window.location.origin)}`;
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
