@@ -35,12 +35,15 @@ interface SignInErrors {
   password?: string;
 }
 
+const authApiBaseUrl =
+  import.meta.env.VITE_AUTH_API_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  "http://localhost:8000";
+
 const getAuthHint = async (email: string) => {
   try {
     const response = await fetch(
-      `${
-        import.meta.env.VITE_AUTH_API_URL || ""
-      }/api/users/auth-status?email=${encodeURIComponent(email)}`,
+      `${authApiBaseUrl}/api/users/auth-status?email=${encodeURIComponent(email)}`,
     );
     const result = await response.json();
 
@@ -59,14 +62,15 @@ const getAuthHint = async (email: string) => {
 };
 
 const SignInPage = () => {
-  const [showPassword, setShowPassword] = useState(false);  const [formData, setFormData] = useState<SignInFormData>({
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState<SignInFormData>({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState<SignInErrors>({});
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [serverError, setServerError] = useState("");
 
@@ -95,9 +99,26 @@ const SignInPage = () => {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleGoogleSignIn = () => {
-    const baseURL = import.meta.env.VITE_AUTH_API_URL || "";
-    window.location.href = `${baseURL}/api/auth/sign-in/social?provider=google&callbackURL=${encodeURIComponent(window.location.origin)}`;
+  const handleGoogleSignIn = async () => {
+    setIsGoogleSubmitting(true);
+    setServerError("");
+
+    try {
+      const redirectTo = `${window.location.origin}/`;
+      const { error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: redirectTo,
+      });
+
+      if (error) {
+        throw error;
+      }
+    } catch (err) {
+      console.error("Google sign in failed:", err);
+      setServerError("Google sign in failed. Please try again.");
+    } finally {
+      setIsGoogleSubmitting(false);
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -140,7 +161,9 @@ const SignInPage = () => {
       });
     } catch (err) {
       const rawMessage =
-        err instanceof Error ? err.message : "Unable to sign in. Please try again.";
+        err instanceof Error
+          ? err.message
+          : "Unable to sign in. Please try again.";
 
       if (/invalid email or password/i.test(rawMessage)) {
         setServerError(await getAuthHint(formData.email));
@@ -218,7 +241,9 @@ const SignInPage = () => {
                 onChange={handleChange}
                 placeholder="you@example.com"
                 className={`w-full rounded-2xl border bg-white/[0.02] py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15 ${
-                  errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : "border-white/10"
+                  errors.email
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                    : "border-white/10"
                 }`}
               />
             </div>
@@ -245,7 +270,9 @@ const SignInPage = () => {
                 onChange={handleChange}
                 placeholder="••••••••••••"
                 className={`w-full rounded-2xl border bg-white/[0.02] py-3.5 pl-11 pr-12 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15 ${
-                  errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : "border-white/10"
+                  errors.password
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                    : "border-white/10"
                 }`}
               />
               <button
@@ -254,7 +281,11 @@ const SignInPage = () => {
                 onClick={() => setShowPassword((value) => !value)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
+                {showPassword ? (
+                  <FaEyeSlash className="h-4 w-4" />
+                ) : (
+                  <FaEye className="h-4 w-4" />
+                )}
               </button>
             </div>
             {errors.password && (
