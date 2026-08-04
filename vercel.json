@@ -1,8 +1,23 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "https://fan-kit-server.vercel.app/api/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "x-vercel-enable-rewrite-caching",
+          "value": "0"
+        }
+      ]
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { apiClient } from "./apiClient";
+
 export interface User {
   _id: string;
   name: string;
@@ -13,10 +14,10 @@ export interface User {
   avatar?: string;
 }
 
-// interface UsersResponse {
-//   success: boolean;
-//   users: User[];
-// }
+interface UsersResponse {
+  success: boolean;
+  users: User[];
+}
 
 interface MessageResponse {
   success: boolean;
@@ -30,8 +31,9 @@ export const UserAPI = {
     return apiClient<User>("/api/users/me");
   },
 
-  getAllUsers() {
-    return apiClient<User[]>("/api/users");
+  async getAllUsers() {
+    const res = await apiClient<UsersResponse>("/api/users");
+    return res.users;
   },
 
   updateRole(id: string, role: UserRole) {
