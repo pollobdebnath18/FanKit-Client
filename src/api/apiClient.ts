@@ -1,7 +1,9 @@
+// Dev: VITE_AUTH_API_URL=http://localhost:8000 (from local .env)
+// Prod: VITE_AUTH_API_URL must NOT be set in Vercel env vars —
+//       falls back to window.location.origin so all requests go
+//       through the Vercel rewrite proxy with a first-party cookie.
 export const BASE_URL =
-  import.meta.env.VITE_AUTH_API_URL ||
-  import.meta.env.VITE_API_BASE_URL ||
-  window.location.origin;
+  import.meta.env.VITE_AUTH_API_URL || window.location.origin;
 
 export async function apiClient<T>(
   endpoint: string,

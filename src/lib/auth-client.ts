@@ -1,14 +1,16 @@
 import { createAuthClient } from "better-auth/react";
 
+// Dev: set VITE_AUTH_API_URL=http://localhost:8000 in your local .env
+// Prod: do NOT set VITE_AUTH_API_URL in Vercel — it falls back to
+//       window.location.origin so requests go through the Vercel rewrite
+//       proxy and the session cookie stays first-party.
 const baseURL =
-  import.meta.env.VITE_AUTH_API_URL ||
-  import.meta.env.VITE_API_BASE_URL ||
-  window.location.origin;
+  import.meta.env.VITE_AUTH_API_URL || window.location.origin;
 
 export const authClient = createAuthClient({
   baseURL,
   fetchOptions: {
-    credentials: "include", // Required for cross-origin cookie sending in production
+    credentials: "include",
   },
 });
 
