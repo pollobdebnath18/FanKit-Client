@@ -1,8 +1,7 @@
 import MainLayout from "../layout/MainLaout";
 
 import HomePage from "../pages/homepage/HomePage";
-import SignInPage from "../pages/auth/SignInPage";
-import SignUpPage from "../pages/auth/SignUpPage";
+import AuthPage from "../pages/auth/AuthPage";
 import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
 import ErrorPage from "../components/error/ErrorPage";
 import ProductDetails from "../pages/products/ProductDetails";
@@ -55,12 +54,12 @@ export const MainRoutes = {
 
     {
       path: "signin",
-      element: <SignInPage />,
+      element: <AuthPage />,
     },
 
     {
       path: "signup",
-      element: <SignUpPage />,
+      element: <AuthPage />,
     },
 
     {

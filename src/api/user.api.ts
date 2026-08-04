@@ -13,10 +13,10 @@ export interface User {
   avatar?: string;
 }
 
-interface UsersResponse {
-  success: boolean;
-  users: User[];
-}
+// interface UsersResponse {
+//   success: boolean;
+//   users: User[];
+// }
 
 interface MessageResponse {
   success: boolean;
@@ -31,7 +31,7 @@ export const UserAPI = {
   },
 
   getAllUsers() {
-    return apiClient<UsersResponse>("/api/users").then((res) => res.users);
+    return apiClient<User[]>("/api/users");
   },
 
   updateRole(id: string, role: UserRole) {

@@ -1,13 +1,8 @@
 import { createAuthClient } from "better-auth/react";
-
-const fallbackBaseURL = import.meta.env.DEV
-  ? "http://localhost:8000"
-  : "https://fan-kit-server.vercel.app";
+// import { API_BASE_URL } from "../api/apiClient";
 
 const baseURL =
-  import.meta.env.VITE_AUTH_API_URL ||
-  import.meta.env.VITE_API_BASE_URL ||
-  fallbackBaseURL;
+  import.meta.env.VITE_AUTH_API_URL || import.meta.env.VITE_API_BASE_URL || "";
 
 export const authClient = createAuthClient({
   baseURL,

@@ -1,9 +1,14 @@
-import { type FormEvent, useState } from "react";
-import { FaEye, FaEyeSlash, FaEnvelope, FaLock } from "react-icons/fa";
-import { Link, useNavigate } from "react-router";
+import { type FormEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
+import { FaEnvelope, FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
+import useAuth from "../../hooks/useAuth";
 import { authClient } from "../../lib/auth-client";
+// import { API_BASE_URL } from "../../api/apiClient";
+import { BASE_URL } from "../../api/apiClient";
+
+type Mode = "login" | "register";
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
@@ -26,163 +31,121 @@ const GoogleIcon = () => (
   </svg>
 );
 
-interface SignInFormData {
-  email: string;
-  password: string;
-}
+const authApiBaseUrl = BASE_URL;
 
-interface SignInErrors {
-  email?: string;
-  password?: string;
-}
+const AuthPage = () => {
+  const {
+    user,
+    login,
+    register,
+    loading,
+    initialLoading,
+    error: authError,
+  } = useAuth();
 
-const authApiBaseUrl =
-  import.meta.env.VITE_AUTH_API_URL ||
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.DEV
-    ? "http://localhost:8000"
-    : "https://fan-kit-server.vercel.app");
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-const getAuthHint = async (email: string) => {
-  try {
-    const response = await fetch(
-      `${authApiBaseUrl}/api/users/auth-status?email=${encodeURIComponent(email)}`,
-    );
-    const result = await response.json();
-
-    if (!result?.success) return "Invalid email or password.";
-
-    if (!result.exists) {
-      return "No account found with this email. Please create an account first.";
-    }
-    if (!result.hasPassword) {
-      return "This email uses Google sign-in. Please use the 'Sign in with Google' button instead.";
-    }
-    return "Incorrect password. Please try again, or use 'Forgot password' to reset it.";
-  } catch {
-    return "Invalid email or password.";
-  }
-};
-
-const SignInPage = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState<SignInFormData>({
+  const [mode, setMode] = useState<Mode>("login");
+  const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState<SignInErrors>({});
-  const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [serverError, setServerError] = useState("");
-  const queryClient = useQueryClient();
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
-  const validate = () => {
-    const nextErrors: SignInErrors = {};
+  const isLogin = mode === "login";
 
-    if (!formData.email.trim()) {
-      nextErrors.email = "Email is required.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      nextErrors.email = "Please enter a valid email address.";
+  useEffect(() => {
+    if (user) {
+      const redirectTo = user.role === "admin" ? "/admin/dashboard" : "/";
+      navigate(redirectTo, { replace: true });
     }
-
-    if (!formData.password) {
-      nextErrors.password = "Password is required.";
-    } else if (formData.password.length < 8) {
-      nextErrors.password = "Password must be at least 8 characters.";
-    }
-
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
-  };
+  }, [user, navigate]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: undefined }));
-  };
-
-  const handleGoogleSignIn = async () => {
-    setIsGoogleSubmitting(true);
-    setServerError("");
-
-    try {
-      const redirectTo = `${window.location.origin}/`;
-      const { error } = await authClient.signIn.social({
-        provider: "google",
-
-        callbackURL: redirectTo,
-      });
-
-      if (error) {
-        throw error;
-      }
-    } catch (err) {
-      console.error("Google sign in failed:", err);
-      setServerError("Google sign in failed. Please try again.");
-    } finally {
-      setIsGoogleSubmitting(false);
-    }
+    setForm((prev) => ({
+      ...prev,
+      [event.target.name]: event.target.value,
+    }));
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!validate()) return;
+    let result;
 
-    setIsSubmitting(true);
-    setServerError("");
-
-    try {
-      const { data, error } = await authClient.signIn.email({
-        email: formData.email,
-        password: formData.password,
+    if (isLogin) {
+      result = await login({
+        email: form.email,
+        password: form.password,
         rememberMe,
       });
-
-      type AuthUser = {
-        id: string;
-        name: string;
-        email: string;
-        emailVerified: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        role?: string;
-      };
-
-      if (error) {
-        throw new Error(error.message || "Invalid email or password.");
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ["current-user"] });
-      await queryClient.refetchQueries({ queryKey: ["current-user"] });
-
-      const user = data?.user as AuthUser;
-
-      if (user.role === "admin") {
-        navigate("/admin/dashboard");
-        return;
-      }
-      alert("Account logged in successfully");
-      navigate("/", {
-        replace: true,
+    } else {
+      result = await register({
+        name: form.name,
+        email: form.email,
+        password: form.password,
       });
-    } catch (err) {
-      const rawMessage =
-        err instanceof Error
-          ? err.message
-          : "Unable to sign in. Please try again.";
+    }
 
-      if (/invalid email or password/i.test(rawMessage)) {
-        setServerError(await getAuthHint(formData.email));
-      } else {
-        setServerError(rawMessage);
+    if (!result.success) return;
+
+    await queryClient.invalidateQueries({ queryKey: ["current-user"] });
+
+    if (!isLogin && result.data?.user?.email) {
+      try {
+        await fetch(`${authApiBaseUrl}/api/users/set-role`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: result.data.user.email }),
+        });
+      } catch {
+        // best-effort role assignment
       }
-    } finally {
-      setIsSubmitting(false);
     }
   };
+
+  const handleToggle = () => {
+    setMode((prev) => (prev === "login" ? "register" : "login"));
+    setForm({
+      name: "",
+      email: "",
+      password: "",
+    });
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleSubmitting(true);
+
+    try {
+      const redirectTo = `${window.location.origin}/`;
+      const { error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: redirectTo,
+      });
+
+      if (error) {
+        console.error("Google sign in failed:", error);
+      }
+    } catch (err) {
+      console.error("Google sign in failed:", err);
+    } finally {
+      setIsGoogleSubmitting(false);
+    }
+  };
+
+  if (initialLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-950">
+        <p className="text-lg font-medium text-white">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-12">
@@ -200,13 +163,15 @@ const SignInPage = () => {
       >
         <div className="mb-8 text-center">
           <p className="text-xs font-bold uppercase tracking-[0.4em] text-cyan-400">
-            Welcome Back
+            {isLogin ? "Welcome Back" : "Get Started"}
           </p>
           <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Access FanKit
+            {isLogin ? "Access FanKit" : "Create Account"}
           </h2>
           <p className="mt-2 text-sm text-slate-400">
-            Enter your details below to resume your experience.
+            {isLogin
+              ? "Enter your details below to resume your experience."
+              : "Provide your details to initiate registration."}
           </p>
         </div>
 
@@ -221,7 +186,9 @@ const SignInPage = () => {
           {isGoogleSubmitting ? (
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
           ) : (
-            <span>Sign in with Google</span>
+            <span>
+              {isLogin ? "Sign in with Google" : "Sign up with Google"}
+            </span>
           )}
         </motion.button>
 
@@ -234,7 +201,27 @@ const SignInPage = () => {
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
-          {/* Email input */}
+          {!isLogin && (
+            <div className="flex flex-col">
+              <span className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Full Name
+              </span>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-4 flex items-center text-slate-500">
+                  <FaUser className="h-4 w-4" />
+                </span>
+                <input
+                  name="name"
+                  type="text"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Jane Doe"
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.02] py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15"
+                />
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col">
             <span className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Email Address
@@ -246,24 +233,14 @@ const SignInPage = () => {
               <input
                 name="email"
                 type="email"
-                value={formData.email}
+                value={form.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
-                className={`w-full rounded-2xl border bg-white/[0.02] py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15 ${
-                  errors.email
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
-                    : "border-white/10"
-                }`}
+                className="w-full rounded-2xl border border-white/10 bg-white/[0.02] py-3.5 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15"
               />
             </div>
-            {errors.email && (
-              <span className="mt-1.5 text-xs font-medium text-red-400">
-                {errors.email}
-              </span>
-            )}
           </div>
 
-          {/* Password input */}
           <div className="flex flex-col">
             <span className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               Password
@@ -275,14 +252,10 @@ const SignInPage = () => {
               <input
                 name="password"
                 type={showPassword ? "text" : "password"}
-                value={formData.password}
+                value={form.password}
                 onChange={handleChange}
                 placeholder="••••••••••••"
-                className={`w-full rounded-2xl border bg-white/[0.02] py-3.5 pl-11 pr-12 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15 ${
-                  errors.password
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
-                    : "border-white/10"
-                }`}
+                className="w-full rounded-2xl border border-white/10 bg-white/[0.02] py-3.5 pl-11 pr-12 text-sm text-white placeholder-slate-500 outline-hidden transition-all duration-200 focus:border-cyan-500 focus:bg-white/[0.04] focus:ring-4 focus:ring-cyan-500/15"
               />
               <button
                 type="button"
@@ -297,67 +270,68 @@ const SignInPage = () => {
                 )}
               </button>
             </div>
-            {errors.password && (
-              <span className="mt-1.5 text-xs font-medium text-red-400">
-                {errors.password}
-              </span>
-            )}
           </div>
 
-          <div className="flex items-center justify-between text-xs sm:text-sm">
-            <label className="flex cursor-pointer items-center gap-2 select-none text-slate-400 hover:text-white transition-colors">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(event) => setRememberMe(event.target.checked)}
-                className="h-4 w-4 rounded-md border-white/10 bg-white/[0.02] text-cyan-500 accent-cyan-500 focus:ring-0"
-              />
-              <span>Remember me</span>
-            </label>
-            <Link
-              to="/forgot-password"
-              className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
-            >
-              Forgot password?
-            </Link>
-          </div>
+          {isLogin && (
+            <div className="flex items-center justify-between text-xs sm:text-sm">
+              <label className="flex cursor-pointer items-center gap-2 select-none text-slate-400 hover:text-white transition-colors">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(event) => setRememberMe(event.target.checked)}
+                  className="h-4 w-4 rounded-md border-white/10 bg-white/[0.02] text-cyan-500 accent-cyan-500 focus:ring-0"
+                />
+                <span>Remember me</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => navigate("/forgot-password")}
+                className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
 
-          {serverError && (
+          {authError && (
             <motion.div
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
               className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3.5 text-sm font-medium text-red-400"
             >
-              {serverError}
+              {authError}
             </motion.div>
           )}
 
           <motion.button
             whileTap={{ scale: 0.98 }}
             type="submit"
-            disabled={isSubmitting}
+            disabled={loading}
             className="relative flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:from-blue-500 hover:to-cyan-400 hover:shadow-cyan-500/25 focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none"
           >
-            {isSubmitting ? (
+            {loading ? (
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            ) : (
+            ) : isLogin ? (
               "Sign In"
+            ) : (
+              "Create Account"
             )}
           </motion.button>
         </form>
 
         <p className="mt-8 text-center text-xs sm:text-sm text-slate-400">
-          New to FanKit?{" "}
-          <Link
-            to="/signup"
+          {isLogin ? "New to FanKit?" : "Already have an account?"}{" "}
+          <button
+            type="button"
+            onClick={handleToggle}
             className="font-bold text-cyan-400 hover:text-cyan-300 transition-colors"
           >
-            Create an account
-          </Link>
+            {isLogin ? "Create an account" : "Sign In"}
+          </button>
         </p>
       </motion.div>
     </div>
   );
 };
 
-export default SignInPage;
+export default AuthPage;
