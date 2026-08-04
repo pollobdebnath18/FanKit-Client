@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react";
 import { FaEye, FaEyeSlash, FaEnvelope, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
 import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 import { authClient } from "../../lib/auth-client";
 
 const GoogleIcon = () => (
@@ -38,7 +39,9 @@ interface SignInErrors {
 const authApiBaseUrl =
   import.meta.env.VITE_AUTH_API_URL ||
   import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.DEV ? "http://localhost:8000" : "");
+  (import.meta.env.DEV
+    ? "http://localhost:8000"
+    : "https://fan-kit-server.vercel.app");
 
 const getAuthHint = async (email: string) => {
   try {
@@ -73,6 +76,7 @@ const SignInPage = () => {
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [serverError, setServerError] = useState("");
+  const queryClient = useQueryClient();
 
   const validate = () => {
     const nextErrors: SignInErrors = {};
@@ -107,6 +111,7 @@ const SignInPage = () => {
       const redirectTo = `${window.location.origin}/`;
       const { error } = await authClient.signIn.social({
         provider: "google",
+
         callbackURL: redirectTo,
       });
 
@@ -150,12 +155,16 @@ const SignInPage = () => {
         throw new Error(error.message || "Invalid email or password.");
       }
 
+      await queryClient.invalidateQueries({ queryKey: ["current-user"] });
+      await queryClient.refetchQueries({ queryKey: ["current-user"] });
+
       const user = data?.user as AuthUser;
 
       if (user.role === "admin") {
         navigate("/admin/dashboard");
         return;
       }
+      alert("Account logged in successfully");
       navigate("/", {
         replace: true,
       });

@@ -1,6 +1,9 @@
 const BASE_URL =
   import.meta.env.VITE_AUTH_API_URL ||
-  (import.meta.env.DEV ? "http://localhost:8000" : "");
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV
+    ? "http://localhost:8000"
+    : "https://fan-kit-server.vercel.app");
 
 export async function apiClient<T>(
   endpoint: string,
