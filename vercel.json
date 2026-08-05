@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://fan-kit-server.vercel.app/api/$1"
+      "destination": "https://fankit-server.onrender.com/api/$1"
     },
     {
       "source": "/(.*)",

@@ -8,8 +8,8 @@ export interface AuthUser {
   emailVerified: boolean;
   role?: string;
   image?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface AuthResult {

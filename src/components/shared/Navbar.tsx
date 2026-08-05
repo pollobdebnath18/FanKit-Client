@@ -375,13 +375,8 @@ const Navbar: FC = () => {
                                 </Link>
                                 <button
                                   onClick={async () => {
-                                    await authClient.signOut({
-                                      fetchOptions: {
-                                        onSuccess: () => {
-                                          window.location.href = "/";
-                                        },
-                                      },
-                                    });
+                                    await authClient.signOut();
+                                    window.location.href = "/";
                                   }}
                                   className="w-full text-left rounded-lg px-3 py-2 text-sm font-semibold text-red-500 transition hover:bg-red-50"
                                 >
@@ -619,14 +614,9 @@ const Navbar: FC = () => {
 
                       <button
                         onClick={async () => {
-                          await authClient.signOut({
-                            fetchOptions: {
-                              onSuccess: () => {
-                                setIsMenuOpen(false);
-                                window.location.href = "/";
-                              },
-                            },
-                          });
+                          await authClient.signOut();
+                          setIsMenuOpen(false);
+                          window.location.href = "/";
                         }}
                         className="w-full px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition"
                       >

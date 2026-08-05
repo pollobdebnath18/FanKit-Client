@@ -83,13 +83,8 @@ const SettingsPanel = ({ user }: SettingsPanelProps) => {
   };
 
   const handleSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          window.location.href = "/";
-        },
-      },
-    });
+    await authClient.signOut();
+    window.location.href = "/";
   };
 
   return (

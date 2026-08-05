@@ -20,20 +20,5 @@ export const orderStatusTone = (status: OrderStatus): BadgeTone => {
   }
 };
 
-export const productStatusTone = (
-  status: "active" | "draft" | "archived",
-): BadgeTone => {
-  switch (status) {
-    case "active":
-      return "success";
-    case "draft":
-      return "neutral";
-    case "archived":
-      return "warning";
-    default:
-      return "neutral";
-  }
-};
-
 export const userRoleTone = (role: "user" | "admin"): BadgeTone =>
   role === "admin" ? "brand" : "neutral";

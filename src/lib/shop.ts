@@ -46,8 +46,6 @@ export const SHOP_CATEGORIES: Record<string, ShopCategoryConfig> = {
   },
 };
 
-export const SHOP_CATEGORY_SLUGS = Object.keys(SHOP_CATEGORIES);
-
 export const getShopCategory = (slug: string): ShopCategoryConfig | null =>
   SHOP_CATEGORIES[slug] ??
   (slug === ALL_PRODUCTS_CONFIG.slug ? ALL_PRODUCTS_CONFIG : null);

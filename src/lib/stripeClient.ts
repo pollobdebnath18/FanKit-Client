@@ -8,4 +8,4 @@ export const stripePromise = publishableKey
   ? loadStripe(publishableKey)
   : null;
 
-export const isStripeConfigured = Boolean(publishableKey);
+

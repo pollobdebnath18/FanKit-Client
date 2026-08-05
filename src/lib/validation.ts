@@ -57,8 +57,3 @@ export const validateCheckout = (form: CheckoutForm): CheckoutErrors => {
 
   return errors;
 };
-
-export const EMPTY_CHECKOUT_FORM: CheckoutForm = {
-  customer: { fullName: "", email: "", phone: "" },
-  shipping: { address: "", city: "", postalCode: "", country: "" },
-};
