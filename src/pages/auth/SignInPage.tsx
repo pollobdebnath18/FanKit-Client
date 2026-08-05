@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { FaEnvelope, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 import { authClient } from "../../lib/auth-client";
+import { UserAPI } from "../../api/user.api";
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
@@ -22,6 +23,7 @@ const SignInPage = () => {
     loading,
     initialLoading,
     error: authError,
+    getSession,
   } = useAuth();
 
   const navigate = useNavigate();
@@ -34,9 +36,7 @@ const SignInPage = () => {
 
   useEffect(() => {
     if (user) {
-      const redirectTo = user.role === "admin" ? "/admin/dashboard" : "/";
-      alert("successfully logged in");
-      navigate(redirectTo, { replace: true });
+      navigate("/", { replace: true });
     }
   }, [user, navigate]);
 
@@ -59,18 +59,37 @@ const SignInPage = () => {
     if (!result.success) return;
 
     await queryClient.invalidateQueries({ queryKey: ["current-user"] });
+
+    try {
+      const currentUser = await UserAPI.getCurrentUser();
+      const redirectTo =
+        currentUser?.role === "admin" ? "/admin/dashboard" : "/";
+      navigate(redirectTo, { replace: true });
+    } catch {
+      navigate("/", { replace: true });
+    }
   };
 
   const handleGoogleSignIn = async () => {
     setIsGoogleSubmitting(true);
     try {
-      const redirectTo = `${window.location.origin}/`;
       const { error } = await authClient.signIn.social({
         provider: "google",
-        callbackURL: redirectTo,
+        callbackURL: `${window.location.origin}/`,
       });
       if (error) {
         console.error("Google sign in failed:", error);
+        return;
+      }
+
+      const sessionUser = await getSession();
+      await queryClient.invalidateQueries({ queryKey: ["current-user"] });
+
+      if (sessionUser) {
+        navigate(
+          sessionUser.role === "admin" ? "/admin/dashboard" : "/",
+          { replace: true },
+        );
       }
     } catch (err) {
       console.error("Google sign in failed:", err);
