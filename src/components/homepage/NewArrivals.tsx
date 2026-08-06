@@ -1,17 +1,29 @@
 import { lazy, Suspense, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
-import { useProducts } from "../../hooks/useProducts";
+import { useShopProducts } from "../../hooks/useShopProducts";
 import ProductCardSkeleton from "../loader/ProductCardSkeleton";
 import JerseyCard from "../products/JerseyCard";
 import { Link } from "react-router";
 import type { Product } from "../../api/product.api";
+import type { ShopFilters } from "../../api/shop.api";
 
 const QuickViewModal = lazy(
   () => import("../products/QuickViewModal"),
 );
 
+const NEW_ARRIVALS_FILTERS: ShopFilters = {
+  sport: "",
+  newArrival: true,
+  // sort: "newest",
+  page: 1,
+  limit: 8,
+  minPrice: 0,
+  maxPrice: Number.MAX_SAFE_INTEGER,
+};
+
 const NewArrivals = () => {
-  const { data: products = [], isLoading, isError } = useProducts();
+  const { data, isLoading, isError } = useShopProducts(NEW_ARRIVALS_FILTERS);
+  const products = data?.products ?? [];
   const [quickView, setQuickView] = useState<Product | null>(null);
 
   if (isLoading) {
@@ -70,7 +82,7 @@ const NewArrivals = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.slice(0, 8).map((product) => (
+            {products.map((product) => (
               <JerseyCard key={product._id} product={product} onQuickView={setQuickView} />
             ))}
           </div>

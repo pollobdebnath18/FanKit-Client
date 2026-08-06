@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { motion, type Variants } from "framer-motion";
+import { usePageMeta } from "../../hooks/usePageMeta";
 import {
   FaTshirt,
   FaTruck,
@@ -147,6 +148,12 @@ const whyChoose = [
 
 /* ─── component ─── */
 const About = () => {
+  usePageMeta({
+    title: "FanKit - About Us",
+    description:
+      "Learn about FanKit - the story behind our premium sports merchandise, our mission to elevate every fan experience, and the values that drive us.",
+    keywords: "About FanKit, FanKit story, FanKit mission, sports merchandise brand",
+  });
   return (
     <div className="bg-[#F5F7FA]">
       {/* ──────────────────────── 1. HERO ──────────────────────── */}

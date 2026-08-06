@@ -24,6 +24,7 @@ import { useWishlist } from "../../hooks/useWishlist";
 import { addCartItem } from "../../api/cart.api";
 import { toggleWishlistItem, type WishlistResponse } from "../../api/wishlist.api";
 import { getProductImage } from "../../lib/productImage";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 type TabKey = "overview" | "specs" | "reviews" | "related";
 
@@ -34,6 +35,18 @@ const ProductDetails = () => {
   const { data: session } = useAuthSession();
   const { currentUser } = useCurrentUser();
   const { data: product, isLoading } = useProduct(id!);
+
+  usePageMeta({
+    title: product
+      ? `${product.title} | FanKit`
+      : "Product Details | FanKit",
+    description: product?.shortDescription,
+    keywords: product
+      ? `${product.title}, ${product.team}, ${product.sport ?? ""} jersey`
+      : "FanKit product",
+    image: product?.imageUrl,
+    url: typeof window !== "undefined" ? window.location.href : undefined,
+  });
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);

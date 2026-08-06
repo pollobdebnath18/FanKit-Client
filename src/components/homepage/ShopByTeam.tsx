@@ -5,19 +5,19 @@ import { FaArrowRight } from "react-icons/fa";
 const teams = [
   {
     name: "Barcelona",
-    href: "/shop/all-products?search=Barcelona",
+    href: "/shop/all-products?type=club-jerseys",
     logo: "https://i.ibb.co.com/99J8gsx0/images-q-tbn-ANd9-Gc-SBIw-Pm63wr-Wk7-RRfk-GA1o-024gx-Bps9-GL8r-At-Scknn-WAc0a-kq6ms5o-P0-s-10.jpg",
     sport: "Football",
   },
   {
     name: "Real Madrid",
-    href: "/shop/all-products?search=Real%20Madrid",
+    href: "/shop/football?type=club-jerseys",
     logo: "https://i.ibb.co.com/jPKSwMpy/images-q-tbn-ANd9-Gc-QQh-Q0p-RNj2-V5m-Tkc-CXl-Oin-Fq-SWv-P0-Yr9-JRZa-Vwf7f-Ehg-s-10.png",
     sport: "Football",
   },
   {
     name: "Liverpool",
-    href: "/shop/all-products?search=Liverpool",
+    href: "/shop/football?type=club-jerseys",
     logo: "https://i.ibb.co.com/6Jq2GT0F/images-q-tbn-ANd9-Gc-R4ri9-PP5-T9es-XWRLlpm-YMDTYd-Jtm-I8c-Tb-TG-Db45-Hp4g-s-10.jpg",
     sport: "Football",
   },
@@ -41,7 +41,7 @@ const teams = [
   },
   {
     name: "Man United",
-    href: "/shop/all-products?search=Manchester%20United",
+    href: "/shop/football?type=club-jerseys",
     logo: "https://i.ibb.co.com/x9WtXKV/250px-Manchester-United-FC-crest-svg.png",
     sport: "Football",
   },

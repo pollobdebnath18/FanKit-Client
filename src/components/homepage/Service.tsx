@@ -210,7 +210,7 @@ const Service = () => {
 
                 {/* Learn More Link */}
                 <motion.a
-                  href="#"
+                  href="/about"
                   className="inline-flex items-center gap-2 text-blue-600 font-semibold mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   whileHover={{ x: 5 }}
                 >

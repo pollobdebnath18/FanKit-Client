@@ -271,28 +271,7 @@ const Testimonials = () => {
           ))}
         </motion.div>
 
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          viewport={{ once: true }}
-          className="mt-16 md:mt-20 text-center"
-        >
-          <p className="text-gray-600 text-lg mb-6">
-            Join thousands of satisfied customers
-          </p>
-          <motion.button
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 20px 25px -5px rgba(59, 130, 246, 0.3)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 md:px-12 py-3 md:py-4 bg-linear-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300"
-          >
-            Shop Now
-          </motion.button>
-        </motion.div>
+       
       </div>
 
       {/* Decorative Elements */}

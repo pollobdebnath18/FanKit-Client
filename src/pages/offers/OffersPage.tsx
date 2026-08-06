@@ -16,6 +16,7 @@ import type { ShopFilters, ShopResponse } from "../../api/shop.api";
 import type { Product } from "../../api/product.api";
 import JerseyCard from "../../components/products/JerseyCard";
 import ProductCardSkeleton from "../../components/loader/ProductCardSkeleton";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 const QuickViewModal = lazy(
   () => import("../../components/products/QuickViewModal"),
@@ -41,6 +42,7 @@ interface ProductSectionProps {
   isLoading: boolean;
   isError: boolean;
   onQuickView: (product: Product) => void;
+  count?: number;
 }
 
 const ProductSection = ({
@@ -54,6 +56,7 @@ const ProductSection = ({
   isLoading,
   isError,
   onQuickView,
+  count = 4,
 }: ProductSectionProps) => {
   const products = data?.products ?? [];
 
@@ -83,7 +86,7 @@ const ProductSection = ({
 
         {isLoading ? (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
-            {Array.from({ length: 4 }).map((_, i) => (
+            {Array.from({ length: count }).map((_, i) => (
               <ProductCardSkeleton key={i} />
             ))}
           </div>
@@ -113,6 +116,13 @@ const ProductSection = ({
 };
 
 const OffersPage = () => {
+  usePageMeta({
+    title: "FanKit - Offers",
+    description:
+      "Explore today's best deals, fresh arrivals, and best sellers at FanKit. Up to 50% off official jerseys and fan gear.",
+    keywords: "FanKit offers, deals, discounts, jerseys on sale, new arrivals",
+    image: "/favicon.svg",
+  });
   const [quickView, setQuickView] = useState<Product | null>(null);
 
   const dealFilters: ShopFilters = {
@@ -129,7 +139,7 @@ const OffersPage = () => {
     newArrival: true,
     sort: "newest",
     page: 1,
-    limit: 4,
+    limit: 8,
     minPrice: 0,
     maxPrice: Number.MAX_SAFE_INTEGER,
   };
@@ -317,6 +327,7 @@ const OffersPage = () => {
         isLoading={arrivals.isLoading}
         isError={arrivals.isError}
         onQuickView={setQuickView}
+        count={8}
       />
 
       <div className="bg-gradient-to-b from-white to-slate-50">

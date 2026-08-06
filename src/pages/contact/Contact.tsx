@@ -12,6 +12,7 @@ import {
   FaExclamationCircle,
 } from "react-icons/fa";
 import { MessageAPI } from "../../api/message.api";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 /* ─── animation helpers ─── */
 const fadeUp: Variants = {
@@ -62,6 +63,12 @@ const contactInfo = [
 
 /* ─── component ─── */
 const Contact = () => {
+  usePageMeta({
+    title: "FanKit - Contact Us",
+    description:
+      "Contact FanKit for support, orders, and partnerships. Reach our team by email, phone, or visit us at 32 Akhaliya, Sylhet, Bangladesh.",
+    keywords: "Contact FanKit, customer support, sports merchandise help",
+  });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

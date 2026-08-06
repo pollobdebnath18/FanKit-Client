@@ -84,10 +84,15 @@ export interface PriceRangeOption {
 
 export const PRICE_RANGES: PriceRangeOption[] = [
   { value: "all", label: "All Prices", min: 0, max: Number.MAX_SAFE_INTEGER },
-  { value: "under-200", label: "Under - 300", min: 0, max: 200 },
-  { value: "200-400", label: "200 – 400", min: 200, max: 400 },
-  { value: "400-600", label: "400 – 600", min: 400, max: 600 },
-  { value: "over-600", label: "Over - 800", min: 600, max: Number.MAX_SAFE_INTEGER },
+  { value: "under-200", label: "Under 200", min: 0, max: 200 },
+  { value: "200-400", label: "200–400", min: 200, max: 400 },
+  { value: "400-600", label: "400–600", min: 400, max: 600 },
+  {
+    value: "600-over",
+    label: "Over 600",
+    min: 600,
+    max: Number.MAX_SAFE_INTEGER,
+  },
 ];
 
 export const getPriceRange = (value: string): PriceRangeOption =>

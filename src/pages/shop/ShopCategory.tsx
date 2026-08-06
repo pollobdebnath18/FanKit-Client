@@ -13,6 +13,7 @@ import ShopGrid from "../../components/shop/ShopGrid";
 import ShopPagination from "../../components/shop/ShopPagination";
 import { SHOP_CATEGORIES } from "../../lib/shop";
 import ErrorPage from "../../components/error/ErrorPage";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 // Only fetched when the user actually opens quick view.
 const QuickViewModal = lazy(
@@ -26,6 +27,19 @@ const ShopCategory = () => {
   const config = getShopCategory(category ?? "");
   // All Products page shows every item (no sport filter sent to the API).
   const sport = config?.slug === "all-products" ? "" : (config?.slug ?? "");
+
+  usePageMeta({
+    title: config
+      ? `FanKit - ${config.label} Jerseys`
+      : "FanKit - Jerseys & Fan Gear",
+    description: config
+      ? `${config.tagline}. Shop official ${config.label.toLowerCase()} jerseys and fan gear at FanKit.`
+      : "Shop the full FanKit collection - official jerseys, kits and fan accessories.",
+    keywords: `${config?.label ?? "FanKit"} jerseys, ${
+      config?.label ?? "sports"
+    } merchandise, fan gear`,
+    image: "/favicon.svg",
+  });
 
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

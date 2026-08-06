@@ -31,7 +31,6 @@ const offersMenu: NavLinkItem[] = [
   { label: "Today's Deals", href: "/offers" },
   { label: "New Arrivals", href: "/shop/all-products?newArrival=true" },
   { label: "Best Sellers", href: "/shop/all-products?sort=best-selling" },
-  { label: "Clearance Sale", href: "/shop/all-products?onSale=true" },
   { label: "All Products", href: "/shop/all-products" },
 ];
 

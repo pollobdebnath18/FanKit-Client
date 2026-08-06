@@ -8,6 +8,7 @@ import {
   FaFire,
 } from "react-icons/fa";
 import { Link } from "react-router";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 const features = [
   {
@@ -41,6 +42,13 @@ const stats = [
 ];
 
 const Shop = () => {
+  usePageMeta({
+    title: "Shop FanKit - Official Jerseys & Sports Merchandise",
+    description:
+      "Shop the complete FanKit collection: official football and cricket jerseys, classic kits, accessories and fan gear for every supporter.",
+    keywords: "shop jerseys, football kits, cricket jerseys, sports merchandise, fan gear",
+    image: "/favicon.svg",
+  });
   return (
     <section className="bg-[#F5F7FA] min-h-screen">
       {/* ─── Hero ─── */}
