@@ -33,7 +33,6 @@ export const MainRoutes = {
       element: <HomePage />,
     },
     { path: "products/:id", Component: ProductDetails },
-    { path: "/", element: <h1>Home</h1> },
     {
       path: "about",
       Component: About,

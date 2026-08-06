@@ -1,127 +1,170 @@
-# FanKit Client ⚽🏏🧢
+<div align="center">
 
-Frontend for **FanKit** — an e-commerce platform for sports merchandise. Browse, search, and shop football jerseys, cricket jerseys, and accessories.
+# ⚽ FanKit Client
 
 **Wear Your Team. Live The Game.**
 
----
+A modern e-commerce  sports merchandise — football jerseys, cricket
+jerseys, and accessories. Built with React, TypeScript, and Vite.
 
-## Tech Stack
+**Live demo:** [https://fankit-two.vercel.app](https://fankit-two.vercel.app)
 
-- React 19, TypeScript 6, Vite 8
-- Tailwind CSS v4, DaisyUI 5
-- React Router 8
-- TanStack React Query 5
-- Better Auth (client)
-- Framer Motion 12
-- Recharts
+</div>
 
 ---
 
-## Features
+## 📋 Table of Contents
+
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Scripts](#scripts)
+- [Project Structure](#project-structure)
+- [Deployment](#deployment)
+- [Related Repositories](#related-repositories)
+
+---
+
+## 🧰 Tech Stack
+
+| Layer        | Technology                                             |
+| ------------ | ------------------------------------------------------ |
+| Framework    | [React 19](https://react.dev) + TypeScript             |
+| Build tool   | [Vite 8](https://vite.dev)                             |
+| Styling      | [Tailwind CSS v4](https://tailwindcss.com) + daisyUI 5 |
+| Routing      | [React Router 8](https://reactrouter.com)              |
+| Data fetching| [TanStack Query 5](https://tanstack.com/query)         |
+| Animations   | [Framer Motion 12](https://www.framer.com/motion/)     |
+| Charts       | [Recharts](https://recharts.org)                       |
+| Payments     | [Stripe.js](https://stripe.com)                        |
+| Auth         | [Firebase Auth](https://firebase.google.com)           |
+
+---
+
+## ✨ Features
 
 ### Public
-- **Home** — Hero banner, featured categories (Football / Cricket / Accessories), new arrivals, best sellers, popular teams, testimonials, newsletter
-- **Collections** — Filterable product grid with search, category, subcategory, team, sort, price range, pagination
-- **Product Details** — Image gallery, size selector, quantity, tabs, reviews
-- **About / Contact / Blog**
+- **Home** — hero banner, featured categories, new arrivals, best sellers,
+  popular teams, testimonials, newsletter
+- **Collections / Shop** — filterable product grid with search, category,
+  subcategory, type, team, sort, price range, and pagination
+- **Product Details** — image gallery, size & quantity selector, tabs,
+  reviews, related items
+- **About / Contact / Offers** — informational pages
 
 ### Authenticated
-- Wishlist
-- Shopping Cart
-- Checkout
-- Order History & Tracking
-- Profile & Address Management
-- Product Reviews
+- Wishlist with one-click save / remove
+- Shopping cart with quantity steppers and stock re-validation
+- **Checkout** — card payments via Stripe, plus a bKash demo flow
+- Order history with status timeline (Pending → Paid → Processing →
+  Shipped → Delivered) and tracking numbers
+- Profile, settings, password change, and address book
 
 ### Admin (`/admin`)
-- Dashboard with analytics
-- Manage Products (CRUD)
-- Manage Orders
-- Manage Users
-- Analytics (revenue, traffic, category/brand charts)
-- Store Settings
+- Dashboard with revenue / order / user statistics
+- Product management (create, edit, delete)
+- Order management (status + tracking updates)
+- User management (role toggles)
+- Analytics dashboards
+- Store settings
 
 ---
 
-## Pages
+## 🚀 Getting Started
 
-| URL | Page |
-|---|---|
-| `/` | Homepage |
-| `/shop` | Shop landing |
-| `/collections` | All products (filtered) |
-| `/collections/football` | Football |
-| `/collections/cricket` | Cricket |
-| `/collections/accessories` | Accessories |
-| `/collections/new-arrivals` | New Arrivals |
-| `/collections/best-sellers` | Best Sellers |
-| `/collections/sale` | Sale items |
-| `/collections/:team` | Team collection |
-| `/products/:slug` | Product details |
-| `/about` | About |
-| `/contact` | Contact |
-| `/blog` | Blog |
-| `/signin` | Sign in |
-| `/signup` | Sign up |
-| `/profile` | My Profile |
-| `/profile/addresses` | My Addresses |
-| `/orders` | My Orders |
-| `/orders/:id` | Order Detail |
-| `/wishlist` | Wishlist |
-| `/cart` | Shopping Cart |
-| `/checkout` | Checkout |
-| `/admin/dashboard` | Admin Dashboard |
-| `/admin/products` | Manage Products |
-| `/admin/products/new` | Add Product |
-| `/admin/products/:id/edit` | Edit Product |
-| `/admin/orders` | Manage Orders |
-| `/admin/users` | Manage Users |
-| `/admin/analytics` | Analytics |
-| `/admin/settings` | Settings |
+### Prerequisites
+- Node.js ≥ 20
+- A running [FanKit Server](https://github.com/fankit/fankit-server) (default `http://localhost:8000`)
 
----
-
-## Getting Started
+### Install & run
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
+npm run dev
 ```
 
-### Environment Variables
-
-```env
-VITE_AUTH_API_URL=http://localhost:8000
-```
-
-### Build
-
-```bash
-npm run build      # tsc -b && vite build
-npm run preview
-```
+Open [http://localhost:5173](http://localhost:5173). In development the Vite
+server proxies `/api/*` requests to `http://localhost:8000`.
 
 ---
 
-## Project Structure
+## 🔐 Environment Variables
+
+Copy `.env.example` (or your existing `.env`) and fill in the values:
+
+```env
+# API base URL — dev only. In production the Vercel rewrite proxies /api/*,
+# so this should be left UNSET (see .env.production).
+VITE_AUTH_API_URL=http://localhost:8000
+
+# Stripe publishable key
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_xxxx
+
+# Firebase Web configuration (Firebase Console → Project settings → General)
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
+
+> **Production note:** `.env.production` intentionally omits
+> `VITE_AUTH_API_URL`. Leaving it unset makes `apiClient` fall back to
+> `window.location.origin`, so all `/api/*` calls go through the Vercel
+> rewrite proxy (`vercel.json`) to `https://fankit-server.onrender.com`.
+> This keeps cookies first-party and avoids CORS issues.
+
+---
+
+## 📜 Scripts
+
+| Command               | Description                              |
+| --------------------- | ---------------------------------------- |
+| `npm run dev`         | Start Vite dev server                    |
+| `npm run build`       | Type-check (`tsc -b`) + build (`vite build`) |
+| `npm run preview`     | Preview the production build             |
+| `npm run lint`        | Run ESLint                               |
+
+---
+
+## 📁 Project Structure
 
 ```
 src/
-├── api/             # API client layer
-├── components/      # Shared & page components
-├── hooks/           # TanStack Query hooks
-├── layout/          # Main & Admin layouts
-├── lib/             # Better Auth client
-├── pages/           # All page components
-├── routes/          # Router + auth guards
-├── main.tsx         # Entry point
-└── index.css        # Tailwind
+├── api/          # Typed API modules (cart, orders, products, payments, ...)
+├── assets/       # Static images (logo, banners)
+├── components/   # Shared + feature components (checkout, admin, shop, ...)
+├── hooks/        # TanStack Query hooks (useCart, useOrders, useProducts, ...)
+├── layout/       # MainLaout, AdminLayout
+├── lib/          # auth-client, stripe, format, validation, orderStatus, ...
+├── pages/        # All route components (home, shop, cart, checkout, admin, ...)
+├── routes/       # Router definitions + auth guards
+├── main.tsx      # Application entry point
+└── index.css     # Tailwind / global styles
 ```
 
 ---
 
-## Related
+## 🚢 Deployment
 
-- **Server repo:** [FanKit-Server](https://github.com/your-org/fankit-server)
-- **Requirements:** See `REQUIREMENTS.md` at project root
+The client deploys on **Vercel**.
+
+```bash
+npm run build
+vercel --prod
+```
+
+`vercel.json` rewrites:
+- `/api/*` → `https://fankit-server.onrender.com/api/*` (API proxy)
+- everything else → `/index.html` (SPA fallback)
+
+---
+
+## 🔗 Related Repositories
+
+- **API Server:** [FanKit Server](https://fankit-server.onrender.com) — see the
+  server README for API documentation.
+- **Project docs:** `summary.txt` and `FLOW.txt` at the repository root cover
+  the architecture and end-to-end flows.
