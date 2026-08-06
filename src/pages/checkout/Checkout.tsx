@@ -32,7 +32,7 @@ import PaymentMethodSelector, {
 } from "../../components/checkout/PaymentMethodSelector";
 import type { CheckoutMethod } from "../../components/checkout/PaymentMethodSelector";
 import StripePaymentForm from "../../components/checkout/StripePaymentForm";
-import BkashPaymentButton from "../../components/checkout/BkashPaymentButton";
+import BkashPaymentCard from "../../components/checkout/BkashPaymentCard";
 
 interface StripeSession {
   clientSecret: string;
@@ -307,10 +307,7 @@ const Checkout = () => {
                 </button>
               )
             ) : (
-              <BkashPaymentButton
-                amount={totals.total}
-                beforePay={validate}
-              />
+              <BkashPaymentCard amount={totals.total} beforePay={validate} />
             )}
           </motion.section>
         </div>

@@ -1,10 +1,7 @@
 import { motion } from "framer-motion";
 import { FaLock, FaCreditCard } from "react-icons/fa";
-import {
-  FaCircleCheck,
-  FaCircle,
-} from "react-icons/fa6";
-import { paymentMethodIcon } from "../../lib/orderStatus";
+import { FaCircleCheck, FaCircle } from "react-icons/fa6";
+import BkashLogo from "./BkashLogo";
 
 export type CheckoutMethod = "stripe" | "bkash";
 
@@ -40,8 +37,7 @@ const PaymentMethodSelector = ({
     <div className="grid gap-3 sm:grid-cols-2">
       {options.map((option) => {
         const selected = value === option.id;
-        const Icon =
-          option.id === "stripe" ? FaCreditCard : paymentMethodIcon.bkash;
+        const isBkash = option.id === "bkash";
 
         return (
           <button
@@ -51,26 +47,36 @@ const PaymentMethodSelector = ({
             aria-pressed={selected}
             className={`relative rounded-2xl border-2 p-4 text-left transition-all ${
               selected
-                ? "border-[#2563EB] bg-[#2563EB]/5 shadow-md"
+                ? isBkash
+                  ? "border-[#E2136E] bg-[#E2136E]/5 shadow-md shadow-[#E2136E]/10"
+                  : "border-[#2563EB] bg-[#2563EB]/5 shadow-md"
                 : "border-slate-200 bg-white hover:border-slate-300"
             }`}
           >
             <div className="flex items-center justify-between">
               <div
                 className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-                  selected
-                    ? "bg-[#2563EB] text-white"
-                    : "bg-slate-100 text-slate-600"
+                  isBkash
+                    ? "bg-gradient-to-br from-[#E2136E] to-[#C50B57] text-white"
+                    : selected
+                      ? "bg-[#2563EB] text-white"
+                      : "bg-slate-100 text-slate-600"
                 }`}
               >
-                <Icon className="h-6 w-6" />
+                {isBkash ? (
+                  <BkashLogo className="h-5 w-auto" onDark />
+                ) : (
+                  <FaCreditCard className="h-5 w-5" />
+                )}
               </div>
               <motion.span
                 initial={false}
                 animate={{ scale: selected ? 1 : 0.9 }}
               >
                 {selected ? (
-                  <FaCircleCheck className="h-6 w-6 text-[#2563EB]" />
+                  <FaCircleCheck
+                    className={`h-6 w-6 ${isBkash ? "text-[#E2136E]" : "text-[#2563EB]"}`}
+                  />
                 ) : (
                   <FaCircle className="h-6 w-6 text-slate-300" />
                 )}

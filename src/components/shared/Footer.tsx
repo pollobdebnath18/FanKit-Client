@@ -200,7 +200,7 @@ const Footer = () => {
               {
                 Icon: MdLocationOn,
                 title: "Address",
-                value: "32 Akhaliya, Sylhet, Bangladesh",
+                value: "Sylhet, Bangladesh",
               },
             ].map(({ Icon, title, value }, idx) => (
               <motion.div

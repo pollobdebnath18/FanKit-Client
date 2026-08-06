@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { FaSpinner } from "react-icons/fa";
-import { paymentMethodIcon } from "../../lib/orderStatus";
+import { FaLock, FaSpinner } from "react-icons/fa";
 import { formatBDT } from "../../lib/format";
 
-interface BkashPaymentButtonProps {
+interface BkashPaymentCardProps {
   amount: number;
   disabled?: boolean;
   /** Runs before simulating the payment; returning false aborts. */
@@ -12,18 +11,16 @@ interface BkashPaymentButtonProps {
 }
 
 /**
- * bKash is a demo checkout at the moment (no merchant keys available).
- * Clicking simulates a successful bKash payment and redirects to the
- * success page WITHOUT recording an order in the database.
+ * bKash demo checkout. Clicking "Pay with bKash" simulates a successful
+ * payment and redirects to the success page. No order is recorded in the DB.
  */
-const BkashPaymentButton = ({
+const BkashPaymentCard = ({
   amount,
   disabled,
   beforePay,
-}: BkashPaymentButtonProps) => {
+}: BkashPaymentCardProps) => {
   const navigate = useNavigate();
   const [isPending, setIsPending] = useState(false);
-  const Icon = paymentMethodIcon.bkash;
 
   const handleClick = () => {
     if (beforePay && !beforePay()) return;
@@ -42,7 +39,7 @@ const BkashPaymentButton = ({
       type="button"
       disabled={disabled || isPending}
       onClick={handleClick}
-      className="flex w-full items-center justify-center gap-2 rounded-full bg-[#E2136E] py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+      className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#E2136E] to-[#C50B57] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#E2136E]/25 transition-all hover:brightness-110 hover:shadow-[#E2136E]/35 disabled:cursor-not-allowed disabled:opacity-60"
     >
       {isPending ? (
         <>
@@ -51,7 +48,7 @@ const BkashPaymentButton = ({
         </>
       ) : (
         <>
-          <Icon className="h-4 w-4" />
+          <FaLock className="h-3 w-3" />
           Pay {formatBDT(amount)} with bKash
         </>
       )}
@@ -59,4 +56,4 @@ const BkashPaymentButton = ({
   );
 };
 
-export default BkashPaymentButton;
+export default BkashPaymentCard;
